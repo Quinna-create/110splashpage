@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Japan 110: Introduction to Japanese Popular Culture</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&family=Raleway:wght@300;400;600&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* ── Canvas background ───────────────────────────────────────── */
+    #bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── UI overlay ─────────────────────────────────────────────── */
+    .ui {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6%;
+    }
+
+    /* ── Left: title block ───────────────────────────────────────── */
+    .title-block { flex: 1; }
+
+    .main-title {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.4rem, 6.5vw, 5.5rem);
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      font-style: italic;
+      text-shadow:
+        0 0 40px rgba(130, 200, 255, 0.65),
+        0 0 80px rgba(80, 150, 230, 0.30),
+        2px 3px 8px rgba(0, 0, 0, 0.85);
+    }
+
+    .divider {
+      width: clamp(140px, 38%, 340px);
+      height: 1.5px;
+      margin: 10px 0 12px;
+      background: linear-gradient(
+        to right,
+        rgba(170, 220, 255, 0.90) 0%,
+        rgba(170, 220, 255, 0.35) 60%,
+        transparent 100%
+      );
+    }
+
+    .sub-title {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.75rem, 1.85vw, 1.15rem);
+      color: #9ecfe8;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-shadow: 0 0 22px rgba(120, 190, 255, 0.55);
+    }
+
+    /* ── Right: menu ─────────────────────────────────────────────── */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    /* Active / highlighted item — mimics the bright "NEW GAME" entry */
+    .start-btn {
+      display: block;
+      font-family: 'Raleway', Arial, sans-serif;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 1.9vw, 1.35rem);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 6px 18px 6px 14px;
+      border-right: 3px solid rgba(160, 225, 255, 0.95);
+      background: linear-gradient(to left, rgba(100, 185, 255, 0.14), transparent);
+      text-shadow:
+        0 0 22px rgba(160, 225, 255, 0.95),
+        0 0 45px rgba(100, 185, 255, 0.45);
+      transition: text-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .start-btn:hover, .start-btn:focus {
+      text-shadow:
+        0 0 30px rgba(200, 240, 255, 1),
+        0 0 60px rgba(150, 210, 255, 0.70);
+      background: linear-gradient(to left, rgba(100, 185, 255, 0.26), transparent);
+      outline: none;
+    }
+
+    /* ── Bottom-left professor line ──────────────────────────────── */
+    .professor {
+      position: absolute;
+      bottom: 22px;
+      left: 6%;
+      font-family: 'Raleway', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.55rem, 1.05vw, 0.78rem);
+      color: rgba(190, 215, 240, 0.60);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    /* Vignette */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at 50% 50%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.65) 100%
+      );
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg"></canvas>
+  <div class="vignette"></div>
+
+  <div class="ui">
+    <div class="title-block">
+      <div class="main-title">Japan 110</div>
+      <div class="divider"></div>
+      <div class="sub-title">Introduction to Japanese Popular Culture</div>
+    </div>
+    <div class="menu">
+      <!-- Replace the href value below with your Canvas course URL -->
+      <a href="https://canvas.instructure.com/courses/YOUR_COURSE_ID" class="start-btn">Start</a>
+    </div>
+  </div>
+
+  <div class="professor">Professor Aragorn Quinn</div>
+
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       Canvas: atmospheric city background + flying bird particles
+       Inspired by the Crisis Core: Final Fantasy VII title screen
+    ───────────────────────────────────────────────────────────── */
+    const canvas = document.getElementById('bg');
+    const ctx    = canvas.getContext('2d');
+
+    /* ── Resize ── */
+    function resize() {
+      canvas.width  = window.innerWidth  || document.documentElement.clientWidth  || 800;
+      canvas.height = window.innerHeight || document.documentElement.clientHeight || 500;
+      buildCity();
+    }
+
+    /* ── City silhouette ── */
+    let buildings = [];
+
+    function buildCity() {
+      buildings = [];
+      const W = canvas.width, H = canvas.height;
+      let x = 0;
+      while (x < W + 80) {
+        const bw = 18 + Math.random() * 70;
+        const bh = 55 + Math.random() * (H * 0.48);
+        const by = H - bh;
+        const wins = [];
+        const cols = Math.max(1, Math.floor((bw - 6) / 9));
+        const rows = Math.max(1, Math.floor((bh - 8) / 12));
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (Math.random() > 0.42) {
+              wins.push({
+                wx: x + 4 + c * 9,
+                wy: by + 7 + r * 12,
+                lit: Math.random() > 0.28
+              });
+            }
+          }
+        }
+        buildings.push({ x, y: by, w: bw, h: bh, wins });
+        x += bw + 1 + Math.random() * 12;
+      }
+    }
+
+    /* ── Particles (birds + dust specks) ── */
+    let particles = [];
+
+    function initParticles() {
+      particles = [];
+      const W = canvas.width, H = canvas.height;
+      for (let i = 0; i < 65; i++) {
+        const bird = Math.random() > 0.40;
+        particles.push({
+          x:  Math.random() * W,
+          y:  Math.random() * H * 0.72,
+          sx: 0.35 + Math.random() * 1.3,
+          sy: (Math.random() - 0.55) * 0.55,
+          sz: 2.5 + Math.random() * 4.5,
+          op: 0.13 + Math.random() * 0.42,
+          bird
+        });
+      }
+    }
+
+    /* ── Draw one frame ── */
+    function draw() {
+      const W = canvas.width, H = canvas.height;
+
+      /* Sky */
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0.00, '#060a18');
+      sky.addColorStop(0.40, '#0c1828');
+      sky.addColorStop(0.72, '#16263a');
+      sky.addColorStop(1.00, '#080e18');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+
+      /* Central atmospheric glow (searchlight haze) */
+      const haze = ctx.createRadialGradient(W * 0.38, H * 0.28, 0, W * 0.38, H * 0.28, W * 0.52);
+      haze.addColorStop(0,   'rgba(90,160,230,0.16)');
+      haze.addColorStop(0.5, 'rgba(60,120,200,0.07)');
+      haze.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = haze;
+      ctx.fillRect(0, 0, W, H);
+
+      /* Secondary warm glow upper-right */
+      const haze2 = ctx.createRadialGradient(W * 0.72, H * 0.18, 0, W * 0.72, H * 0.18, W * 0.35);
+      haze2.addColorStop(0,   'rgba(200,130,70,0.10)');
+      haze2.addColorStop(0.6, 'rgba(170,80,40,0.04)');
+      haze2.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = haze2;
+      ctx.fillRect(0, 0, W, H);
+
+      /* City silhouette */
+      ctx.fillStyle = '#04060f';
+      buildings.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
+
+      /* Window lights */
+      buildings.forEach(b => {
+        b.wins.forEach(w => {
+          if (w.lit) {
+            ctx.fillStyle = 'rgba(210,220,150,0.50)';
+            ctx.fillRect(w.wx, w.wy, 4, 5);
+          }
+        });
+      });
+
+      /* Ground fog band */
+      const fog = ctx.createLinearGradient(0, H * 0.58, 0, H * 0.80);
+      fog.addColorStop(0,   'rgba(70,105,150,0.00)');
+      fog.addColorStop(0.5, 'rgba(70,105,150,0.09)');
+      fog.addColorStop(1,   'rgba(70,105,150,0.00)');
+      ctx.fillStyle = fog;
+      ctx.fillRect(0, H * 0.58, W, H * 0.22);
+
+      /* Bottom shadow */
+      const btm = ctx.createLinearGradient(0, H * 0.78, 0, H);
+      btm.addColorStop(0, 'rgba(0,0,0,0)');
+      btm.addColorStop(1, 'rgba(0,0,0,0.75)');
+      ctx.fillStyle = btm;
+      ctx.fillRect(0, H * 0.78, W, H * 0.22);
+
+      /* ── Particles ── */
+      particles.forEach(p => {
+        p.x += p.sx;
+        p.y += p.sy;
+        if (p.x > W + 24) { p.x = -24; p.y = Math.random() * H * 0.72; }
+        if (p.y < -24)      { p.y = H * 0.70; }
+        if (p.y > H * 0.72){ p.y = Math.random() * H * 0.4; }
+
+        ctx.save();
+        ctx.globalAlpha = p.op;
+        if (p.bird) {
+          /* Simple gull silhouette — two arcs forming an "M" */
+          ctx.strokeStyle = 'rgba(170,210,245,0.90)';
+          ctx.lineWidth   = 0.85;
+          ctx.beginPath();
+          const s = p.sz;
+          ctx.moveTo(p.x - s,       p.y);
+          ctx.quadraticCurveTo(p.x - s * 0.5, p.y - s * 0.95, p.x,        p.y - s * 0.18);
+          ctx.quadraticCurveTo(p.x + s * 0.5, p.y - s * 0.95, p.x + s,    p.y);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = 'rgba(170,210,245,0.75)';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.sz * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+    }
+
+    /* ── Animation loop ── */
+    function loop() {
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+      initParticles();
+    });
+
+    resize();
+    initParticles();
+    loop();
+  </script>
+
+</body>
+</html>
