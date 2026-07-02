@@ -435,7 +435,7 @@
       function startMusic() {
         playing = true;
         if (!ctx) buildAmbient();
-        else if (ctx.state === 'suspended') ctx.resume();
+        if (ctx.state === 'suspended') ctx.resume().catch(function () {});
         master.gain.cancelScheduledValues(ctx.currentTime);
         master.gain.linearRampToValueAtTime(0.30, ctx.currentTime + 1.8);
         btn.textContent = '🔊';
@@ -473,6 +473,16 @@
 
       /* ── Auto-start immediately; resume on first interaction if browser blocks ── */
       startMusic();
+      /* Retry resume every 300 ms until context is running (covers browsers
+         that unblock AudioContext shortly after page load without a gesture) */
+      var _retries = 0;
+      var _retryInterval = setInterval(function () {
+        if (!ctx || ctx.state === 'running' || ++_retries >= 10) {
+          clearInterval(_retryInterval);
+          return;
+        }
+        ctx.resume().catch(function () {});
+      }, 300);
       function autoResume() {
         if (ctx) ctx.resume();
         document.removeEventListener('click',      autoResume);
