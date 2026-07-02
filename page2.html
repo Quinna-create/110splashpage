@@ -465,13 +465,15 @@
       }
 
       btn.addEventListener('click', function () {
+        /* If the AudioContext is still suspended (browser blocked autoplay),
+           the first button press should simply unblock it rather than toggle. */
+        if (ctx && ctx.state === 'suspended') { ctx.resume(); return; }
         if (playing) stopMusic(); else startMusic();
       });
 
       /* ── Auto-start immediately; resume on first interaction if browser blocks ── */
       startMusic();
-      function autoResume(e) {
-        if (e && e.target === btn) return;
+      function autoResume() {
         if (ctx) ctx.resume();
         document.removeEventListener('click',      autoResume);
         document.removeEventListener('keydown',    autoResume);
