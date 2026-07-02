@@ -406,15 +406,15 @@
         });
 
         /* — slow arpeggio: Am9 tones (A3 C4 E4 G4 B4) — */
-        var arpScale = [220, 261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 261.63];
-        var arpIdx   = 0;
+        const arpScale = [220, 261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 261.63];
+        let arpIdx   = 0;
 
         function fireArp() {
           if (!playing) return;
-          var freq = arpScale[arpIdx++ % arpScale.length];
+          const freq = arpScale[arpIdx++ % arpScale.length];
 
-          var osc = ctx.createOscillator();
-          var env = ctx.createGain();
+          const osc = ctx.createOscillator();
+          const env = ctx.createGain();
           osc.type            = 'triangle';
           osc.frequency.value = freq;
           env.gain.setValueAtTime(0,      ctx.currentTime);
@@ -444,9 +444,22 @@
       function stopMusic() {
         playing = false;
         clearTimeout(arpTimer);
-        if (master) {
+        arpTimer = null;
+        if (ctx && master) {
           master.gain.cancelScheduledValues(ctx.currentTime);
           master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+          /* close context and release drone oscillators after fade */
+          const ctxToClose   = ctx;
+          const nodesToStop  = droneNodes.slice();
+          setTimeout(function () {
+            if (!playing) {
+              nodesToStop.forEach(function (n) { try { n.stop(); } catch (e) {} });
+              ctxToClose.close();
+            }
+          }, 1600);
+          ctx        = null;
+          master     = null;
+          droneNodes = [];
         }
         btn.textContent = '🔇';
       }

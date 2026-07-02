@@ -440,8 +440,8 @@
         R: 0
       };
 
-      const BPM = 144;
-      const S   = 60 / BPM / 2; /* 8th-note duration (seconds) */
+      const BPM        = 144;
+      const eighthNote = 60 / BPM / 2; /* 8th-note duration (seconds) */
 
       /* — Melody: [freq, 8th-note-count] (64 beats total) — */
       const MELODY = [
@@ -497,13 +497,13 @@
         const start = ctx.currentTime + 0.05;
         let tM = start, tB = start;
 
-        MELODY.forEach(function (note) {
-          schedNote(note[0], note[1] * S, tM, 0.22, 'square');
-          tM += note[1] * S;
+        MELODY.forEach(function (entry) {
+          schedNote(entry[0], entry[1] * eighthNote, tM, 0.22, 'square');
+          tM += entry[1] * eighthNote;
         });
-        BASS.forEach(function (note) {
-          schedNote(note[0], note[1] * S, tB, 0.13, 'triangle');
-          tB += note[1] * S;
+        BASS.forEach(function (entry) {
+          schedNote(entry[0], entry[1] * eighthNote, tB, 0.13, 'triangle');
+          tB += entry[1] * eighthNote;
         });
 
         const loopLen = tM - start;
@@ -523,9 +523,14 @@
       function stopMusic() {
         playing = false;
         clearTimeout(loopTimer);
-        if (master) {
+        loopTimer = null;
+        if (ctx && master) {
           master.gain.cancelScheduledValues(ctx.currentTime);
           master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+          const ctxToClose = ctx;
+          setTimeout(function () { if (!playing) ctxToClose.close(); }, 600);
+          ctx    = null;
+          master = null;
         }
         btn.textContent = '🔇';
       }
