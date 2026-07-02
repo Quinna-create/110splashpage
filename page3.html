@@ -522,7 +522,7 @@
       function startMusic() {
         playing = true;
         if (!ctx) buildCtx();
-        else if (ctx.state === 'suspended') ctx.resume();
+        if (ctx.state === 'suspended') ctx.resume().catch(function () {});
         master.gain.cancelScheduledValues(ctx.currentTime);
         master.gain.linearRampToValueAtTime(0.40, ctx.currentTime + 0.3);
         scheduleLoop();
@@ -545,13 +545,25 @@
       }
 
       btn.addEventListener('click', function () {
+        /* If the AudioContext is still suspended (browser blocked autoplay),
+           the first button press should simply unblock it rather than toggle. */
+        if (ctx && ctx.state === 'suspended') { ctx.resume().catch(function () {}); return; }
         if (playing) stopMusic(); else startMusic();
       });
 
       /* ── Auto-start immediately; resume on first interaction if browser blocks ── */
       startMusic();
-      function autoResume(e) {
-        if (e && e.target === btn) return;
+      /* Retry resume every 300 ms until context is running (covers browsers
+         that unblock AudioContext shortly after page load without a gesture) */
+      var autoplayRetries = 0;
+      var autoplayRetryInterval = setInterval(function () {
+        if (!ctx || ctx.state === 'running' || ++autoplayRetries >= 10) {
+          clearInterval(autoplayRetryInterval);
+          return;
+        }
+        ctx.resume().catch(function () {});
+      }, 300);
+      function autoResume() {
         if (ctx) ctx.resume();
         document.removeEventListener('click',      autoResume);
         document.removeEventListener('keydown',    autoResume);
