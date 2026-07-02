@@ -209,14 +209,17 @@
     const canvas = document.getElementById('bg');
     const ctx    = canvas.getContext('2d');
 
+    const DEFAULT_WIDTH  = 800;
+    const DEFAULT_HEIGHT = 500;
+
     let W, H;
     let platforms = [];
     let barrels   = [];
 
     /* ── Resize ── */
     function resize() {
-      W = canvas.width  = window.innerWidth  || 800;
-      H = canvas.height = window.innerHeight || 500;
+      W = canvas.width  = window.innerWidth  || DEFAULT_WIDTH;
+      H = canvas.height = window.innerHeight || DEFAULT_HEIGHT;
       buildScene();
     }
 
@@ -314,7 +317,7 @@
 
         /* Rungs */
         ctx.lineWidth = 2;
-        const rungGap = 10;
+        const rungGap = Math.max(8, H * 0.015);
         for (let ry = yTop + 5; ry < yBot - 3; ry += rungGap) {
           ctx.beginPath();
           ctx.moveTo(lx - lw / 2, ry);
