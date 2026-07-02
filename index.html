@@ -471,7 +471,8 @@
       });
 
       /* ── Auto-start on first user interaction ── */
-      function autoStart() {
+      function autoStart(e) {
+        if (e && e.target === btn) return;
         document.removeEventListener('click',      autoStart);
         document.removeEventListener('keydown',    autoStart);
         document.removeEventListener('touchstart', autoStart);
