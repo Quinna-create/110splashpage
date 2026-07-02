@@ -79,7 +79,7 @@
 
     /* ── Title block ─────────────────────────────────────────────── */
     .title-block {
-      margin-top: clamp(18px, 5vh, 48px);
+      margin-top: clamp(4px, 0.8vh, 10px);
       text-align: center;
       padding: 0 4%;
     }
@@ -104,7 +104,7 @@
     }
 
     .sub-title {
-      margin-top: clamp(12px, 2.5vh, 24px);
+      margin-top: clamp(6px, 1.2vh, 12px);
       font-family: 'Press Start 2P', monospace;
       font-size: clamp(0.38rem, 1.05vw, 0.72rem);
       color: #FFE000;
@@ -229,7 +229,7 @@
       const NUM = 5;
       /* Platforms spaced vertically; tilt alternates left-down / right-down */
       for (let i = 0; i < NUM; i++) {
-        const frac  = 0.78 - i * 0.135;          /* vertical fraction from top */
+        const frac  = 0.82 - i * 0.125;          /* vertical fraction from top */
         const yMid  = H * frac;
         const tilt  = (i % 2 === 0) ? 0.045 : -0.045;  /* slope as dy/dx fraction */
         const ph    = Math.max(9, H * 0.025);    /* girder thickness */
