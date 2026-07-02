@@ -470,17 +470,18 @@
         if (playing) stopMusic(); else startMusic();
       });
 
-      /* ── Auto-start on first user interaction ── */
-      function autoStart(e) {
+      /* ── Auto-start immediately; resume on first interaction if browser blocks ── */
+      startMusic();
+      function autoResume(e) {
         if (e && e.target === btn) return;
-        document.removeEventListener('click',      autoStart);
-        document.removeEventListener('keydown',    autoStart);
-        document.removeEventListener('touchstart', autoStart);
-        if (!playing) startMusic();
+        if (ctx) ctx.resume();
+        document.removeEventListener('click',      autoResume);
+        document.removeEventListener('keydown',    autoResume);
+        document.removeEventListener('touchstart', autoResume);
       }
-      document.addEventListener('click',      autoStart);
-      document.addEventListener('keydown',    autoStart);
-      document.addEventListener('touchstart', autoStart);
+      document.addEventListener('click',      autoResume);
+      document.addEventListener('keydown',    autoResume);
+      document.addEventListener('touchstart', autoResume);
     })();
   </script>
 
