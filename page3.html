@@ -163,21 +163,30 @@
       z-index: 5;
     }
 
-    /* ── Music toggle ────────────────────────────────────────────── */
+    /* ── Music toggle (DK arcade style) ─────────────────────────── */
     #music-btn {
       position: fixed;
       bottom: 16px;
       right: 5%;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
+      background: #c80000;
+      border: 3px solid #ffcc00;
+      color: #ffcc00;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.5rem;
+      padding: 6px 10px;
       cursor: pointer;
-      opacity: 0.65;
-      transition: opacity 0.2s;
+      opacity: 0.85;
+      transition: opacity 0.2s, box-shadow 0.2s;
       z-index: 20;
-      filter: drop-shadow(0 0 4px rgba(255, 68, 68, 0.70));
+      box-shadow: 3px 3px 0 #000, 0 0 8px rgba(255, 68, 0, 0.70);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.5;
     }
-    #music-btn:hover { opacity: 1; }
+    #music-btn:hover {
+      opacity: 1;
+      box-shadow: 3px 3px 0 #000, 0 0 14px rgba(255, 200, 0, 0.90);
+    }
   </style>
 </head>
 <body>
@@ -215,7 +224,7 @@
   </div>
 
   <div class="professor">&#169; Professor Aragorn Quinn</div>
-  <button id="music-btn" title="Toggle music">🔇</button>
+  <button id="music-btn" title="Toggle music">♪ ON</button>
 
   <script>
     /* ─────────────────────────────────────────────────────────────
@@ -517,7 +526,7 @@
         master.gain.cancelScheduledValues(ctx.currentTime);
         master.gain.linearRampToValueAtTime(0.40, ctx.currentTime + 0.3);
         scheduleLoop();
-        btn.textContent = '🔊';
+        btn.textContent = '♪ ON';
       }
 
       function stopMusic() {
@@ -532,12 +541,23 @@
           ctx    = null;
           master = null;
         }
-        btn.textContent = '🔇';
+        btn.textContent = '♪ OFF';
       }
 
       btn.addEventListener('click', function () {
         if (playing) stopMusic(); else startMusic();
       });
+
+      /* ── Auto-start on first user interaction ── */
+      function autoStart() {
+        document.removeEventListener('click',      autoStart);
+        document.removeEventListener('keydown',    autoStart);
+        document.removeEventListener('touchstart', autoStart);
+        if (!playing) startMusic();
+      }
+      document.addEventListener('click',      autoStart);
+      document.addEventListener('keydown',    autoStart);
+      document.addEventListener('touchstart', autoStart);
     })();
   </script>
 
