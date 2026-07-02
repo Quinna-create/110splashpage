@@ -162,6 +162,22 @@
       text-transform: uppercase;
       z-index: 5;
     }
+
+    /* ── Music toggle ────────────────────────────────────────────── */
+    #music-btn {
+      position: fixed;
+      bottom: 16px;
+      right: 5%;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.65;
+      transition: opacity 0.2s;
+      z-index: 20;
+      filter: drop-shadow(0 0 4px rgba(255, 68, 68, 0.70));
+    }
+    #music-btn:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -199,6 +215,7 @@
   </div>
 
   <div class="professor">&#169; Professor Aragorn Quinn</div>
+  <button id="music-btn" title="Toggle music">🔇</button>
 
   <script>
     /* ─────────────────────────────────────────────────────────────
@@ -397,6 +414,126 @@
     window.addEventListener('resize', resize);
     resize();
     loop();
+  </script>
+
+  <script>
+    /* ─── 8-bit arcade music (Web Audio API) ─────────────────────────
+       DK-inspired square-wave melody + triangle bass.
+       Starts only on user interaction to satisfy browser autoplay policy.
+    ─────────────────────────────────────────────────────────────── */
+    (function () {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+
+      let ctx, master;
+      let loopTimer = null;
+      let playing   = false;
+
+      const btn = document.getElementById('music-btn');
+
+      /* — Note frequency table — */
+      const N = {
+        C3:130.81, D3:146.83, E3:164.81, G3:196.00, A3:220.00,
+        C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00,
+        A4:440.00, B4:493.88,
+        C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99,
+        R: 0
+      };
+
+      const BPM = 144;
+      const S   = 60 / BPM / 2; /* 8th-note duration (seconds) */
+
+      /* — Melody: [freq, 8th-note-count] (64 beats total) — */
+      const MELODY = [
+        [N.G4,1],[N.G4,1],[N.A4,1],[N.B4,1],[N.G4,1],[N.E4,1],[N.D4,2],
+        [N.G4,1],[N.A4,1],[N.B4,1],[N.C5,1],[N.D5,2],[N.R,2],
+        [N.E5,1],[N.D5,1],[N.C5,1],[N.B4,1],[N.A4,1],[N.G4,2],[N.R,1],
+        [N.G4,1],[N.A4,1],[N.B4,1],[N.C5,1],[N.B4,1],[N.A4,1],[N.G4,2],
+        [N.G4,1],[N.G4,1],[N.A4,1],[N.B4,1],[N.G4,1],[N.E4,1],[N.D4,2],
+        [N.G5,1],[N.F5,1],[N.E5,1],[N.D5,1],[N.C5,2],[N.R,2],
+        [N.A4,1],[N.B4,1],[N.C5,1],[N.D5,1],[N.E5,1],[N.D5,1],[N.C5,1],[N.B4,1],
+        [N.G4,2],[N.R,1],[N.A4,1],[N.G4,2],[N.R,2],
+      ];
+
+      /* — Bass line: [freq, 8th-note-count] (64 beats total) — */
+      const BASS = [
+        [N.G3,4],[N.C4,4],
+        [N.E3,4],[N.D3,4],
+        [N.G3,4],[N.C4,4],
+        [N.D3,4],[N.G3,4],
+        [N.G3,4],[N.C4,4],
+        [N.A3,4],[N.D3,4],
+        [N.G3,4],[N.E3,4],
+        [N.D3,4],[N.G3,4],
+      ];
+
+      function buildCtx() {
+        ctx    = new Ctx();
+        master = ctx.createGain();
+        master.gain.value = 0;
+        master.connect(ctx.destination);
+      }
+
+      function schedNote(freq, durSec, startTime, vol, type) {
+        if (freq === N.R) return;
+        const osc = ctx.createOscillator();
+        const env = ctx.createGain();
+        osc.type            = type;
+        osc.frequency.value = freq;
+        const sustain = durSec * 0.72;
+        const release = durSec * 0.22;
+        env.gain.setValueAtTime(0,   startTime);
+        env.gain.linearRampToValueAtTime(vol,      startTime + 0.008);
+        env.gain.setValueAtTime(vol * 0.85,        startTime + sustain);
+        env.gain.linearRampToValueAtTime(0,        startTime + sustain + release);
+        osc.connect(env);
+        env.connect(master);
+        osc.start(startTime);
+        osc.stop(startTime + sustain + release + 0.01);
+      }
+
+      function scheduleLoop() {
+        if (!playing) return;
+        const start = ctx.currentTime + 0.05;
+        let tM = start, tB = start;
+
+        MELODY.forEach(function (note) {
+          schedNote(note[0], note[1] * S, tM, 0.22, 'square');
+          tM += note[1] * S;
+        });
+        BASS.forEach(function (note) {
+          schedNote(note[0], note[1] * S, tB, 0.13, 'triangle');
+          tB += note[1] * S;
+        });
+
+        const loopLen = tM - start;
+        loopTimer = setTimeout(scheduleLoop, (loopLen - 0.1) * 1000);
+      }
+
+      function startMusic() {
+        playing = true;
+        if (!ctx) buildCtx();
+        else if (ctx.state === 'suspended') ctx.resume();
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.linearRampToValueAtTime(0.40, ctx.currentTime + 0.3);
+        scheduleLoop();
+        btn.textContent = '🔊';
+      }
+
+      function stopMusic() {
+        playing = false;
+        clearTimeout(loopTimer);
+        if (master) {
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+        }
+        btn.textContent = '🔇';
+      }
+
+      btn.addEventListener('click', function () {
+        if (playing) stopMusic(); else startMusic();
+      });
+    })();
   </script>
 
 </body>

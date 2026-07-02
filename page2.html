@@ -133,6 +133,22 @@
         rgba(0, 0, 0, 0.65) 100%
       );
     }
+
+    /* ── Music toggle ────────────────────────────────────────────── */
+    #music-btn {
+      position: fixed;
+      bottom: 22px;
+      right: 6%;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      opacity: 0.55;
+      transition: opacity 0.2s;
+      z-index: 10;
+      filter: drop-shadow(0 0 6px rgba(100, 185, 255, 0.60));
+    }
+    #music-btn:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -153,6 +169,7 @@
   </div>
 
   <div class="professor">Professor Aragorn Quinn</div>
+  <button id="music-btn" title="Toggle music">🔇</button>
 
   <script>
     /* ─────────────────────────────────────────────────────────────
@@ -321,6 +338,123 @@
     resize();
     initParticles();
     loop();
+  </script>
+
+  <script>
+    /* ─── Ambient music (Web Audio API) ─────────────────────────────
+       Dark atmospheric soundscape matching the night-city canvas.
+       Starts only on user interaction to satisfy browser autoplay policy.
+    ─────────────────────────────────────────────────────────────── */
+    (function () {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+
+      let ctx, master;
+      let droneNodes = [];
+      let arpTimer   = null;
+      let playing    = false;
+
+      const btn = document.getElementById('music-btn');
+
+      function buildAmbient() {
+        ctx    = new Ctx();
+        master = ctx.createGain();
+        master.gain.value = 0;
+        master.connect(ctx.destination);
+
+        /* — feedback-delay reverb — */
+        const delay   = ctx.createDelay(3.0);
+        const fbGain  = ctx.createGain();
+        const wetGain = ctx.createGain();
+        delay.delayTime.value = 0.55;
+        fbGain.gain.value     = 0.48;
+        wetGain.gain.value    = 0.32;
+        delay.connect(fbGain);
+        fbGain.connect(delay);
+        delay.connect(wetGain);
+        wetGain.connect(master);
+
+        /* — drone oscillators (A-minor tonality) — */
+        const drones = [
+          { freq: 55.00,  type: 'sine',     vol: 0.14 }, /* A1 */
+          { freq: 82.41,  type: 'sine',     vol: 0.09 }, /* E2 */
+          { freq: 110.00, type: 'sine',     vol: 0.07 }, /* A2 */
+          { freq: 130.81, type: 'triangle', vol: 0.04 }, /* C3 */
+        ];
+        drones.forEach(function (d, i) {
+          const osc = ctx.createOscillator();
+          const g   = ctx.createGain();
+          osc.type            = d.type;
+          osc.frequency.value = d.freq;
+          osc.detune.value    = (i % 2 === 0 ? 4 : -4);
+          g.gain.value        = d.vol;
+          osc.connect(g);
+          g.connect(master);
+          g.connect(delay);
+          osc.start();
+
+          /* micro-drift LFO */
+          const lfo = ctx.createOscillator();
+          const lg  = ctx.createGain();
+          lfo.frequency.value = 0.03 + i * 0.019;
+          lg.gain.value       = 1.2;
+          lfo.connect(lg);
+          lg.connect(osc.detune);
+          lfo.start();
+
+          droneNodes.push(osc, lfo);
+        });
+
+        /* — slow arpeggio: Am9 tones (A3 C4 E4 G4 B4) — */
+        var arpScale = [220, 261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 261.63];
+        var arpIdx   = 0;
+
+        function fireArp() {
+          if (!playing) return;
+          var freq = arpScale[arpIdx++ % arpScale.length];
+
+          var osc = ctx.createOscillator();
+          var env = ctx.createGain();
+          osc.type            = 'triangle';
+          osc.frequency.value = freq;
+          env.gain.setValueAtTime(0,      ctx.currentTime);
+          env.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 0.18);
+          env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.4);
+          osc.connect(env);
+          env.connect(master);
+          env.connect(delay);
+          osc.start();
+          osc.stop(ctx.currentTime + 2.5);
+
+          arpTimer = setTimeout(fireArp, 1800 + Math.random() * 1600);
+        }
+
+        arpTimer = setTimeout(fireArp, 600);
+      }
+
+      function startMusic() {
+        playing = true;
+        if (!ctx) buildAmbient();
+        else if (ctx.state === 'suspended') ctx.resume();
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.linearRampToValueAtTime(0.30, ctx.currentTime + 1.8);
+        btn.textContent = '🔊';
+      }
+
+      function stopMusic() {
+        playing = false;
+        clearTimeout(arpTimer);
+        if (master) {
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+        }
+        btn.textContent = '🔇';
+      }
+
+      btn.addEventListener('click', function () {
+        if (playing) stopMusic(); else startMusic();
+      });
+    })();
   </script>
 
 </body>
