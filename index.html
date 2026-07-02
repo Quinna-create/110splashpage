@@ -171,7 +171,7 @@
   </div>
 
   <div class="professor">Professor Aragorn Quinn</div>
-  <button id="music-btn" title="Toggle music">🔇</button>
+  <button id="music-btn" title="Toggle music">🔊</button>
 
   <script>
     /* ─────────────────────────────────────────────────────────────
@@ -469,6 +469,18 @@
       btn.addEventListener('click', function () {
         if (playing) stopMusic(); else startMusic();
       });
+
+      /* ── Auto-start on first user interaction ── */
+      function autoStart(e) {
+        if (e && e.target === btn) return;
+        document.removeEventListener('click',      autoStart);
+        document.removeEventListener('keydown',    autoStart);
+        document.removeEventListener('touchstart', autoStart);
+        if (!playing) startMusic();
+      }
+      document.addEventListener('click',      autoStart);
+      document.addEventListener('keydown',    autoStart);
+      document.addEventListener('touchstart', autoStart);
     })();
   </script>
 
