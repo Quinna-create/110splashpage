@@ -32,11 +32,14 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 6%;
+    }
+
+    .menu {
       transform: translateX(110vw);
       opacity: 0;
     }
 
-    .ui--revealed {
+    .menu--revealed {
       animation: slideInBounce 1.05s ease-out forwards;
     }
 
@@ -410,13 +413,13 @@
     initParticles();
     loop();
 
-    /* ── Enter arrow: reveal UI on click ── */
+    /* ── Enter arrow: reveal menu on click ── */
     (function () {
       const arrow  = document.getElementById('enter-arrow');
-      const ui     = document.querySelector('.ui');
+      const menu   = document.querySelector('.menu');
       arrow.addEventListener('click', function () {
         arrow.classList.add('hidden');
-        ui.classList.add('ui--revealed');
+        menu.classList.add('menu--revealed');
       });
     })();
   </script>
