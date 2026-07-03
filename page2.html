@@ -32,6 +32,54 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 6%;
+      transform: translateX(110vw);
+      opacity: 0;
+    }
+
+    .ui--revealed {
+      animation: slideInBounce 1.05s ease-out forwards;
+    }
+
+    @keyframes slideInBounce {
+      0%   { transform: translateX(110vw); opacity: 0; }
+      55%  { opacity: 1; }
+      72%  { transform: translateX(-1.8%); }
+      84%  { transform: translateX(1.1%); }
+      93%  { transform: translateX(-0.4%); }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ── Enter arrow ─────────────────────────────────────────────── */
+    #enter-arrow {
+      position: fixed;
+      right: 3%;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      font-size: clamp(3.5rem, 9vw, 7.5rem);
+      color: #ffffff;
+      text-shadow:
+        0 0 40px rgba(130, 200, 255, 0.65),
+        0 0 80px rgba(80, 150, 230, 0.30),
+        2px 3px 8px rgba(0, 0, 0, 0.85);
+      cursor: pointer;
+      user-select: none;
+      z-index: 20;
+      animation: arrowPulse 1.7s ease-in-out infinite;
+      transition: opacity 0.35s ease;
+    }
+
+    #enter-arrow.hidden {
+      opacity: 0;
+      pointer-events: none;
+      animation: none;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.60; transform: translateY(-50%) scale(1); }
+      50%       { opacity: 1;   transform: translateY(-50%) scale(1.14); }
     }
 
     /* ── Left: title block ───────────────────────────────────────── */
@@ -188,6 +236,8 @@
       <span class="menu-item">About</span>
     </div>
   </div>
+
+  <div id="enter-arrow" title="Enter">›</div>
 
   <div class="professor">Professor Aragorn Quinn</div>
   <button id="music-btn" title="Toggle music">🔊</button>
@@ -359,6 +409,16 @@
     resize();
     initParticles();
     loop();
+
+    /* ── Enter arrow: reveal UI on click ── */
+    (function () {
+      const arrow  = document.getElementById('enter-arrow');
+      const ui     = document.querySelector('.ui');
+      arrow.addEventListener('click', function () {
+        arrow.classList.add('hidden');
+        ui.classList.add('ui--revealed');
+      });
+    })();
   </script>
 
   <script>
