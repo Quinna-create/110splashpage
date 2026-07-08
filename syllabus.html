@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syllabus — Japan 110: Japanese Pop Culture</title>
+  <base target="_blank">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&family=Raleway:wght@300;400;600&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #060a18;
+      color: #cdd8e8;
+      font-family: 'Raleway', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ── Atmospheric background ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse at 35% 20%, rgba(90,160,230,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 10%, rgba(200,130,70,0.07) 0%, transparent 45%),
+        linear-gradient(180deg, #060a18 0%, #0c1828 40%, #10202e 70%, #080e18 100%);
+    }
+
+    /* ── Page wrapper ────────────────────────────────────────────── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 28px 80px;
+    }
+
+    /* ── Site header ─────────────────────────────────────────────── */
+    .site-header {
+      margin-bottom: 48px;
+      border-bottom: 1px solid rgba(170,220,255,0.15);
+      padding-bottom: 28px;
+    }
+
+    .course-number {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.75rem, 1.6vw, 0.95rem);
+      color: #9ecfe8;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      text-shadow: 0 0 18px rgba(120,190,255,0.45);
+      margin-bottom: 6px;
+    }
+
+    .course-title {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      line-height: 1.05;
+      font-style: italic;
+      text-shadow:
+        0 0 40px rgba(130,200,255,0.60),
+        0 0 80px rgba(80,150,230,0.25),
+        2px 3px 8px rgba(0,0,0,0.85);
+      margin-bottom: 10px;
+    }
+
+    .header-divider {
+      width: clamp(120px, 40%, 320px);
+      height: 1.5px;
+      background: linear-gradient(
+        to right,
+        rgba(170,220,255,0.90) 0%,
+        rgba(170,220,255,0.35) 60%,
+        transparent 100%
+      );
+      margin-bottom: 10px;
+    }
+
+    .course-subtitle {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.75rem, 1.8vw, 1.05rem);
+      color: #9ecfe8;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-shadow: 0 0 18px rgba(120,190,255,0.45);
+    }
+
+    /* ── Info grid (meeting times, instructor, etc.) ─────────────── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 4px 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(170,220,255,0.10);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 36px;
+    }
+
+    .info-item { padding: 5px 0; }
+
+    .info-label {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.70rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #9ecfe8;
+      margin-bottom: 1px;
+    }
+
+    .info-value {
+      font-size: 0.92rem;
+      color: #dce8f4;
+    }
+
+    .info-separator {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: rgba(170,220,255,0.12);
+      margin: 8px 0;
+    }
+
+    /* ── Section headings ────────────────────────────────────────── */
+    .syllabus-section {
+      margin-bottom: 44px;
+    }
+
+    h2 {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.15rem, 2.6vw, 1.55rem);
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-style: italic;
+      text-shadow: 0 0 22px rgba(130,200,255,0.40);
+      border-left: 3px solid rgba(160,225,255,0.85);
+      padding-left: 12px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 400;
+      font-size: clamp(1rem, 2.1vw, 1.2rem);
+      color: #b8d8f0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 24px 0 10px;
+    }
+
+    h4 {
+      font-family: 'Raleway', Arial, sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #9ecfe8;
+      letter-spacing: 0.06em;
+      margin: 18px 0 8px;
+    }
+
+    /* ── Body text ───────────────────────────────────────────────── */
+    p {
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    /* ── Lists ───────────────────────────────────────────────────── */
+    ul, ol {
+      padding-left: 1.5em;
+      margin-bottom: 14px;
+    }
+
+    li {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    ul li { list-style: disc; }
+    ol li { list-style: decimal; }
+
+    ul ul, ol ol, ul ol, ol ul {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    /* Sub-lists for outcomes */
+    .outcome-sub {
+      list-style: none;
+      padding-left: 1.2em;
+    }
+
+    .outcome-sub li::before {
+      content: '◦ ';
+      color: #9ecfe8;
+    }
+
+    /* ── Links ───────────────────────────────────────────────────── */
+    a {
+      color: #7ec8f5;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(126,200,245,0.35);
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    a:hover, a:focus {
+      color: #b0dcff;
+      border-bottom-color: rgba(176,220,255,0.70);
+      outline: none;
+    }
+
+    /* ── Grading table ───────────────────────────────────────────── */
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+    }
+
+    .grade-table th {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.70rem;
+      letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: #9ecfe8;
+      padding: 8px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(170,220,255,0.22);
+    }
+
+    .grade-table td {
+      padding: 7px 14px;
+      border-bottom: 1px solid rgba(170,220,255,0.08);
+      color: #dce8f4;
+    }
+
+    .grade-table tr:last-child td { border-bottom: none; }
+    .grade-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ── Module / unit blocks ────────────────────────────────────── */
+    .module-block {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(170,220,255,0.10);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 22px;
+    }
+
+    .module-block h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+
+    .module-objectives {
+      font-size: 0.88rem;
+      color: #a8c4dc;
+      font-style: italic;
+      margin-bottom: 16px;
+      border-left: 2px solid rgba(160,225,255,0.30);
+      padding-left: 12px;
+    }
+
+    .unit-block {
+      margin-bottom: 20px;
+    }
+
+    .unit-title {
+      font-family: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: #9ecfe8;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .midterm-note {
+      background: rgba(160,225,255,0.06);
+      border: 1px solid rgba(160,225,255,0.22);
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      color: #c8e4f8;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+
+    .midterm-note strong {
+      font-family: 'Oswald', Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9ecfe8;
+    }
+
+    /* ── Separator rule ──────────────────────────────────────────── */
+    .rule {
+      border: none;
+      height: 1px;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgba(170,220,255,0.25) 30%,
+        rgba(170,220,255,0.25) 70%,
+        transparent
+      );
+      margin: 36px 0;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .page-wrap { padding: 28px 16px 60px; }
+      .info-grid  { padding: 14px 16px; }
+      .module-block { padding: 14px 16px; }
+      .grade-table th,
+      .grade-table td { padding: 7px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <header class="site-header">
+      <div class="course-number">Japan 110-001</div>
+      <h1 class="course-title">Japanese Pop Culture</h1>
+      <div class="header-divider"></div>
+      <div class="course-subtitle">Syllabus</div>
+    </header>
+
+    <!-- ── Course Info ─────────────────────────────────────────────── -->
+    <div class="info-grid" aria-label="Course information">
+      <div class="info-item">
+        <div class="info-label">Class Meeting Times</div>
+        <div class="info-value">Online, asynchronous</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Final Exam</div>
+        <div class="info-value">TBD</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Mode of Delivery</div>
+        <div class="info-value">Online</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Special Technology Requirements</div>
+        <div class="info-value">Canvas (internet-connected device); computer with Steam software installed. Details provided in class.</div>
+      </div>
+
+      <div class="info-separator"></div>
+
+      <div class="info-item">
+        <div class="info-label">Instructor</div>
+        <div class="info-value">Aragorn Quinn</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Phone</div>
+        <div class="info-value"><a href="tel:4142295650">414-229-5650</a></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Email</div>
+        <div class="info-value"><a href="mailto:quinna@uwm.edu">quinna@uwm.edu</a></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Office</div>
+        <div class="info-value">Curtin 897 (Curtin Hall, 8th Floor)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Drop-in Hours</div>
+        <div class="info-value">M/W 2:30 PM–3:30 PM</div>
+      </div>
+    </div>
+
+    <!-- ── Course Description ─────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="desc-heading">
+      <h2 id="desc-heading">Course Description</h2>
+      <p>This course examines Japanese popular culture as a dynamic arena where the nation narrates itself—its past, present, and imagined futures. Through manga, anime, film, music, theater, and other media, we will explore how cultural texts curate collective "self talk," shaping identity and social imagination. The first half of the semester investigates popular retellings of pivotal historical episodes, such as the Bakumatsu period, while the second half turns to science fiction narratives of resistance and oppression. Together, these case studies highlight a central paradox: stories of the past and future are always about the present. Along the way, we will probe the ephemeral nature of pop culture, the shifting border between high and low culture, and the question of what constitutes "pop culture" itself. Students will gain tools to critically analyze cultural production while reflecting on how Japan's narratives resonate globally and locally in contemporary life.</p>
+      <p>This course satisfies requirements for the Asian Studies Certificate and the Japanese Major and Minor.</p>
+
+      <h3>Course Prerequisites</h3>
+      <p>No prerequisites.</p>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Learning Outcomes ──────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="outcomes-heading">
+      <h2 id="outcomes-heading">Learning Outcomes</h2>
+
+      <h3>Civics &amp; Perspectives GER Outcomes</h3>
+      <p>By the end of this course, students will be able to:</p>
+      <ol>
+        <li>
+          Analyze diverse perspectives and experiences by examining how Japanese popular culture reflects identities shaped by class, gender, region, and global audiences.
+          <ul class="outcome-sub">
+            <li><strong>HIPs Connection:</strong> Collaborative learning through module-completion projects and peer feedback.</li>
+            <li><strong>Assessment:</strong> Scaffolded "They Say / I Say" assignments require students to summarize, respond, and extend arguments about cultural texts, demonstrating their ability to engage multiple perspectives.</li>
+          </ul>
+        </li>
+        <li>
+          Examine the historical development of identity and citizenship by investigating how popular retellings of historical episodes narrate evolving concepts of belonging and civic participation in Japan.
+          <ul class="outcome-sub">
+            <li><strong>HIPs Connection:</strong> Writing intensive practice with scaffolded tasks with training in giving and receiving feedback.</li>
+            <li><strong>Assessment:</strong> Scaffolded assignments guide students from identifying cultural narratives to constructing arguments about their civic implications.</li>
+          </ul>
+        </li>
+        <li>
+          Investigate differential experiences and outcomes by considering how marginalized groups—such as women, youth subcultures, or regional communities—are represented in and excluded from cultural narratives.
+          <ul class="outcome-sub">
+            <li><strong>HIPs Connection:</strong> Diversity/global learning through engagement with unfamiliar cultural contexts.</li>
+            <li><strong>Assessment:</strong> Students use "They Say / I Say" templates to articulate counter arguments and highlight underrepresented voices in pop culture.</li>
+          </ul>
+        </li>
+        <li>
+          Analyze social movements and civic change by exploring how cultural texts engage with activism and reform efforts (e.g., labor, anti-nuclear, gender equality) and their impact on civic discourse.
+          <ul class="outcome-sub">
+            <li><strong>HIPs Connection:</strong> Undergraduate research through close reading and analysis of primary cultural sources.</li>
+            <li><strong>Assessment:</strong> Scaffolded assignments culminate in a persuasive essay where students connect cultural texts to civic movements.</li>
+          </ul>
+        </li>
+        <li>
+          Compare civic systems and perspectives by contrasting Japanese cultural narratives of citizenship and civic identity with those of other nations.
+          <ul class="outcome-sub">
+            <li><strong>HIPs Connection:</strong> Global learning and integrative reflection.</li>
+            <li><strong>Assessment:</strong> Final scaffolded project requires students to situate Japanese pop culture within comparative civic frameworks, demonstrating synthesis of course outcomes.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3>Assignment Testing GER Outcomes</h3>
+      <p>Three scaffolded writing projects based on <em>They Say / I Say: The Moves That Matter in Academic Writing, with Readings</em>, by Cathy Birkenstein, Gerald Graff, and Russel Durst:</p>
+      <ul>
+        <li><strong>Project 1 (Summary &amp; Response):</strong> Students practice identifying arguments in cultural texts and responding with their own perspective.</li>
+        <li><strong>Project 2 (Counter Argument &amp; Evidence):</strong> Students incorporate diverse perspectives into their analysis.</li>
+        <li><strong>Project 3 (Synthesis Essay):</strong> Students construct a sustained argument connecting Japanese pop culture to civic identity, social movements, and comparative perspectives.</li>
+      </ul>
+      <p>Together, these scaffolded assignments directly assess GER learning outcomes while embedding HIPs such as writing intensive practice, collaborative learning, diversity/global learning, and undergraduate research.</p>
+
+      <h3>By the End of This Course Students Should Be Able To:</h3>
+      <ol>
+        <li>Identify the most prominent figures, genres, and media that pertain to the production of Japanese popular culture. Students will be able to explain how these shaped subsequent artistic, literary, and civic traditions.</li>
+        <li>Explain how cultural texts such as manga, anime, film, music, and theater became canonical within popular and performative traditions, and examine how patterns of production and consumption of these works have changed over time.</li>
+        <li>Utilize critical frameworks and methods of close reading to analyze cultural values transmitted through Japanese popular culture, including questions of identity, citizenship, and civic participation.</li>
+        <li>Present their analysis through low stakes quizzes, in-class group activities, collaborative projects, and written exams. Students will be able to construct logical arguments based on evidence provided by Japanese media and cultural narratives.</li>
+      </ol>
+
+      <h3>UW System Shared Learning Goals</h3>
+      <p>The above learning outcomes support the UW System learning goals. These goals, and the assignments which most directly support them, are as follows:</p>
+      <ol>
+        <li><strong>Knowledge of Human Cultures and the Natural World:</strong> Students will engage with a broad survey of Japanese cultural history through manga, anime, film, music, and theater. They will be assessed through weekly quizzes and written exams on their ability to place these texts in historical and civic contexts.</li>
+        <li><strong>Critical and Creative Thinking Skills:</strong> Students will be trained in close reading and interpretive analysis of cultural artifacts. These skills will be assessed through scaffolded assignments, including group projects and in-class activities.</li>
+        <li><strong>Effective Communication Skills:</strong> Students will use critical frameworks to make arguments about cultural texts and artifacts, and present those arguments in discussion, writing, and collaborative formats.</li>
+        <li><strong>Intercultural Knowledge and Competence:</strong> Students will engage with cultural material that is novel to most of them and from a background they do not share. They will be asked to empathize with and understand diverse perspectives, and to connect Japanese narratives to broader civic and global contexts.</li>
+      </ol>
+
+      <h3>Area of Inquiry Learning Goals</h3>
+      <p>This course fulfills the criteria for the Understanding Ideas, Language, and Cultures Area of Inquiry general education requirement. Specifically, students will be able to:</p>
+      <ol type="A">
+        <li>Demonstrate comprehension of the cultural history of Japan. Students will identify the most prominent figures, genres, and media that pertain to the production of Japanese popular culture. They will explain how these influenced subsequent artistic, literary, and civic traditions. Further, they will explain coherently and persuasively how cultural texts became canonical within popular and performative traditions, and examine how patterns of production and consumption have changed over time. This goal will be met with the group project in Week 13, where students will analyze new media in relation to the trajectory of Japanese cultural history.</li>
+        <li>The above learning outcomes support UW System shared learning goals 1 (Knowledge of Human Cultures) and 3 (Effective Communication Skills) by building students' close reading and critical skills through engagement with Japanese cultural narratives. These skills will be measured after each of the three course modules with projects that utilize the method outlined in <em>They Say/I Say: Moves that Matter in Academic Writing</em>. These projects will require engagement with the readings, video lectures, and discussion boards in order to produce meaningful, productive discussion, moving us from the position of critical consideration of the material we engage with in the course.</li>
+      </ol>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Credit Hour Policy ──────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="credit-heading">
+      <h2 id="credit-heading">Credit Hour Policy Time Allocation</h2>
+      <p>This is a three-credit course. As a general principle, students should expect to spend at least two hours of preparation work for every one hour spent in class. Thus, students should expect to spend three hours in class and six hours in preparation each week, for a total of nine hours per week.</p>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Readings ───────────────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="readings-heading">
+      <h2 id="readings-heading">Readings</h2>
+      <p><em>(Selections available on Canvas)</em></p>
+      <ul>
+        <li>Asamatsu Ken. "Higoromo," in <em>Tales of Blood and Roses from Japan</em>. Kurodahan Press.</li>
+        <li>Atkins, E. Taylor. <em>A History of Popular Culture in Japan: From the Seventeenth Century to the Present</em>. Bloomsbury. 2019. ISBN 1474258549</li>
+        <li>Takeda Izumo. <em>Chūshingura</em>. Columbia Press. ISBN 9780231035316</li>
+        <li>Graff, Gerald, Cathy Birkenstein, and Russel K. Durst. 2018. <em>They Say / I Say: The Moves That Matter in Academic Writing, with Readings, across Disciplines</em>. Fourth edition. New York: W. W. Norton &amp; Company. ISBN 132407003X</li>
+        <li>Yoshikawa Eiji. <em>The Heike Story</em>. 2022. Tuttle Press. ISBN 4805317078</li>
+        <li>LaMarre, Thomas. <em>The Anime Machine: A Media Theory of Animation</em>. 1st ed. Minneapolis: University of Minnesota Press, 2009. ISBN 9780816651559</li>
+        <li>Steinberg, Marc. <em>Anime's Media Mix: Franchising Toys and Characters in Japan</em>. 1st ed. Minneapolis: University of Minnesota Press, 2012. ISBN 9780816680238</li>
+      </ul>
+
+      <h3>Required Readings (for purchase)</h3>
+      <p><em>(Available through, for example, the UWM bookstore)</em></p>
+      <ul>
+        <li>Otomo Katsuhiro. <em>Akira</em> vol. 4. Kodansha Comics (2010). ISBN 193542906X (approximately $20 new, and available through UWM library, Milwaukee Public Library, and many other municipal library systems)</li>
+        <li>Tezuka Osamu. <em>Shinsengumi</em>. Digital Manga, Inc. (approximately $8 in ebook format).</li>
+        <li>Kawakami, Hiromi. 2024. <em>Under the Eye of the Big Bird: A Novel</em>. Translated by Asa Yoneda. First Soft Skull edition. New York, NY: Soft Skull Press. ISBN 1593768079 (approximately $12 in paperback, and widely available in libraries)</li>
+      </ul>
+
+      <h3>Recommended Readings</h3>
+      <p><em>(To be announced in class)</em></p>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Course Schedule ────────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="schedule-heading">
+      <h2 id="schedule-heading">Course Schedule</h2>
+
+      <!-- Module 1 -->
+      <div class="module-block">
+        <h3>Module 1: Feudal History in Contemporary Pop Culture</h3>
+        <p class="module-objectives"><strong>Objectives:</strong> In this module, we will probe the representation of medieval Japan in popular memory. This content will serve as a springboard for discussion about the fissure between high and low culture and the value of low art. We'll have our first exposure to the method of critical engagement outlined in They Say/I Say, and we'll use this to complete the first of three scaffolded engagements with critical theory. I promise this will be more fun than it sounds.</p>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 1 — Introductions</div>
+          <ol>
+            <li>Complete readings: <em>Heike Monogatari</em>, Chp 1 (on Canvas); <em>Heike Story</em>, by Yoshikawa Eiji (on Canvas); watch <em>History of Japan</em> (link on Canvas); read Introduction, by Joseph Conrad; think about the difference between pop culture and high culture.</li>
+            <li>Engage in discussion.</li>
+            <li>Watch lecture video (5–7 minutes with wrap).</li>
+            <li>Complete unit quiz.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 2 — Genpei in Anime</div>
+          <ol>
+            <li>View <em>Inuō</em> (available on Canvas).</li>
+            <li>Read <em>Higoromo</em> (available on Canvas).</li>
+            <li>Read <em>The Anime Machine</em> (excerpt, available on Canvas).</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 3 — Warring States in Pop Culture</div>
+          <ol>
+            <li>Read <em>Nobunaga Concerto</em> (selection available on Canvas).</li>
+            <li>Play <em>Ikemen Sengoku</em> (available for free on Android and iPhone).</li>
+            <li>View video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 4 — Warring States in Pop Culture</div>
+          <ol>
+            <li>Read <em>Musashi</em> by Yoshikawa Eiji (selection on Canvas).</li>
+            <li>Read <em>They Say/I Say</em> (selection on Canvas).</li>
+            <li>Participate in discussion board.</li>
+            <li>Watch <em>Birushana Rising Flower</em> (on Canvas).</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="midterm-note">
+          <strong>Midterm Project 1:</strong> Complete first They Say/I Say assignment and provide peer feedback. Video instructions for this assignment on Canvas.
+        </div>
+      </div>
+
+      <!-- Module 2 -->
+      <div class="module-block">
+        <h3>Module 2: Rise and Fall of the Samurai in Pop Culture</h3>
+        <p class="module-objectives"><strong>Objectives:</strong> This unit will fast forward to the Edo Period, with a particular focus on the fall of the Tokugawa Shogunate and the Meiji Restoration. This is a particularly exciting time in history (and it is a time when a young Tom Cruise visited the last samurai!), and it is a past that is particularly present in contemporary Japan. We'll engage with the Shinsengumi, a band of sanctioned thugs who 'defended' Kyoto for the shogunate. This group is perhaps the single most popular episode in contemporary Japan for many decades. We'll talk about why that might be. We'll think about the difference between fiction and historiography and talk about why that matters.</p>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 1 — 47 Ronin</div>
+          <ol>
+            <li>Read <em>Chūshingura</em> (available on Canvas).</li>
+            <li>Read Atkins, chp 2 (available on Canvas).</li>
+            <li>Exercise: Japan Lab 47 Ronin.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 2 — Yotsuya</div>
+          <ol>
+            <li>Read <em>Yotsuya Ghost Stories</em> (available on Canvas).</li>
+            <li>Watch: <em>Over Your Dead Body</em> (on Canvas).</li>
+            <li>Read: Hayden White's "Historical Fiction, Fictional History, Historical Reality" (available on Canvas).</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 3 — Shinsengumi</div>
+          <ol>
+            <li>Read: <em>Shinsengumi keppūroku</em>, chp 4.</li>
+            <li>Read Steinberg selection from <em>Anime's Media Mix</em> (on Canvas).</li>
+            <li>Participate in discussion board.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 4 — Shinsengumi</div>
+          <ol>
+            <li>Read: <em>Shinsengumi keppūroku</em>, chp 2 (available on Canvas).</li>
+            <li>Read: Tezuka Osamu's <em>Shinsengumi</em>.</li>
+            <li>Participate in discussion board.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="midterm-note">
+          <strong>Midterm Project 2:</strong> This will be our second of three scaffolded They Say/I Say projects. Make good use of your notes from lectures and readings, particularly the Hayden White reading. Be ready to offer peer feedback. Video instructions for this assignment on Canvas.
+        </div>
+      </div>
+
+      <!-- Module 3 -->
+      <div class="module-block">
+        <h3>Module 3: The Future in Pop Culture</h3>
+        <p class="module-objectives"><strong>Objectives:</strong> In this final module, we will turn our attention from the past to the future. What does it mean to tell stories about the future? Why do we enjoy time travel stories so much? Be prepared to engage with manga and prose visions of possible futures! And be ready for the Frederick Jameson: that guy does not pull punches when it comes to hard, academic writing. But we'll work through it, and I promise you you'll find it more rewarding after we have talked about it!</p>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 1 — Akira</div>
+          <ol>
+            <li>Read <em>Akira</em>, vol 4.</li>
+            <li>Read Atkins chp 8 (on Canvas).</li>
+            <li>Participate in discussion board.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 2 — Ghost in the Shell 2</div>
+          <ol>
+            <li>Read <em>Ghost in the Shell 2</em>.</li>
+            <li>Read Gibson "Introduction" (selection on Canvas).</li>
+            <li>Participate in discussion board.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 3 — Under the Eye of the Big Bird</div>
+          <ol>
+            <li>Read <em>Under the Eye of the Big Bird</em> by Kawakami Hiromi.</li>
+            <li>Read "Progress or Utopia, or: Can We Imagine the Future?" by Frederick Jameson (on Canvas).</li>
+            <li>Contribute to discussion board.</li>
+            <li>Participate in Canvas exercise.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="unit-block">
+          <div class="unit-title">Unit 4 — Paper Spaceship</div>
+          <ol>
+            <li>Read: <em>Paper Spaceship</em> (on Canvas).</li>
+            <li>Participate on discussion board.</li>
+            <li>Watch video lecture.</li>
+            <li>Complete unit assignment.</li>
+          </ol>
+        </div>
+
+        <div class="midterm-note">
+          <strong>Final Project:</strong> Complete the final of our three scaffolded They Say/I Say assignments. Complete peer review of your assigned partner's project. Video instructions for this assignment on Canvas.
+        </div>
+      </div>
+
+      <p><em>Please note that the instructor reserves the right to make changes to the syllabus as needed as the course progresses.</em></p>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Expectations & Grading ──────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="grading-heading">
+      <h2 id="grading-heading">Expectations and Assignments</h2>
+      <p>Students are expected to complete the readings on the syllabus before beginning the online module in which they are assigned. Students will be asked to complete short quizzes and written assignments on the assigned readings throughout the term to assess comprehension of the assigned texts. In addition to these short assignments, the course will also include two mid-term exams and a final exam.</p>
+
+      <h3>Grading</h3>
+      <ul>
+        <li>Assignments, discussion participation, quizzes, and exercises: <strong>30%</strong></li>
+        <li>Midterm projects 1 and 2: <strong>30%</strong></li>
+        <li>Final project: <strong>40%</strong></li>
+      </ul>
+
+      <h3>Grading Scale</h3>
+      <table class="grade-table" aria-label="Grading scale">
+        <thead>
+          <tr>
+            <th>Grade</th>
+            <th>Percentage</th>
+            <th>Grade</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>A</td><td>93–100</td><td>C</td><td>73–76.9</td></tr>
+          <tr><td>A−</td><td>90–92.9</td><td>C−</td><td>70–72.9</td></tr>
+          <tr><td>B+</td><td>87–89.9</td><td>D+</td><td>67–69.9</td></tr>
+          <tr><td>B</td><td>83–86.9</td><td>D</td><td>63–66.9</td></tr>
+          <tr><td>B−</td><td>80–82.9</td><td>D−</td><td>60–62.9</td></tr>
+          <tr><td>C+</td><td>77–79.9</td><td>F</td><td>59.9 and below</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Course Policies ────────────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="policies-heading">
+      <h2 id="policies-heading">Course Policies</h2>
+
+      <h3>Late Assignments</h3>
+      <p>This is an asynchronous course, so the only deadlines are at the end of each of the three modules. It is incumbent upon the student to complete modules by the deadline. In principle, these deadlines are final. It is the responsibility of the student to have a functioning connection with stable internet access. Technical questions can be directed to the UWM Tech desk at <a href="tel:4142294040">414-229-4040</a>.</p>
+
+      <h3>Safety Policies</h3>
+      <p>For students with health or safety concerns, please contact the instructor. We are dedicated to making the classroom a safe and accessible place for all students.</p>
+
+      <h3>Make-up Policies</h3>
+      <p>Students are responsible for obtaining the material from missed classes. As stated above, missed in-class quizzes and assignments cannot be made up. However, fifteen weeks is a long time, and it is totally understandable that things can come up. Because of this, the two lowest quiz scores are dropped, no questions asked. You don't need to provide doctor's notes or other excuses. Exams, however, can only be taken at a later date in the case of a documented and unavoidable emergency.</p>
+
+      <h3>Digital Tools Policy</h3>
+      <p>There are tools that are easily available that might seem like they offer easy shortcuts to the work in this class. I encourage you not to make use of them. Anything that may seem like a short-cut is by definition not a replacement for the work we do in this class. This class has been carefully designed to teach you very specific and tangible skills, and having taught this class for many years (and revised and improved it in every new iteration), I can promise you that you have a wonderful opportunity this semester to gain analytical skills that you can take with you for the rest of your life. Using computer-generated summaries, online videos, digital writing assistants, or other shortcuts will not only deprive you of building these skills, they will also inevitably result in very disappointing results in this particular class. I encourage you to set aside the time in your week to do the preparation for every unit. Shortcuts may seem efficient in the short term, but you will find that productivity is far more rewarding than efficiency any day of the week.</p>
+      <p><em>tl;dr: using ChatGPT, YouTube, Wikipedia, etc. won't help you in this class!</em></p>
+
+      <h3>Incomplete Policies</h3>
+      <p>Incompletes are very rarely offered. As per university policy, at the discretion of the professor, an incomplete may be given to a student who has carried a subject successfully until near the end of the semester but, because of illness or other unusual and substantiated cause beyond that student's control, has been unable to take or complete the final examination or to complete some limited amount of term work. An incomplete is not given unless the student proves to the instructor that s/he was prevented from completing course requirements for just cause as indicated above.</p>
+      <p>The campus conditions for awarding an incomplete to graduate and undergraduate students can be found at: <a href="https://apps.uwm.edu/secu-policies/storage/other/SAAP%201-13.%20Incomplete%20Grades.pdf">SAAP 1-13: Incomplete Grades (PDF)</a></p>
+    </section>
+
+    <hr class="rule">
+
+    <!-- ── Other Campus Policies ──────────────────────────────────── -->
+    <section class="syllabus-section" aria-labelledby="campus-policies-heading">
+      <h2 id="campus-policies-heading">Other Campus Policies</h2>
+      <p><a href="https://uwm.edu/secu/wp-content/uploads/sites/122/2016/12/Syllabus-Links.pdf">UWM Syllabus Policy Links (PDF)</a></p>
+
+      <h3>Students with Disabilities</h3>
+      <p>Verification of disability, class standards, the policy on the use of alternate materials and test accommodations can be found at: <a href="http://uwm.edu/arc/">uwm.edu/arc</a></p>
+
+      <h3>Religious Observances</h3>
+      <p>Policies regarding accommodations for absences due to religious observance are found at: <a href="https://apps.uwm.edu/secu-policies/storage/other/SAAP%201-2.%20Accommodation%20of%20Religious%20Beliefs.pdf">SAAP 1-2: Accommodation of Religious Beliefs (PDF)</a></p>
+
+      <h3>Students Called to Active Military Duty</h3>
+      <p>Accommodations for absences due to call-up of reserves to active military duty: <a href="https://uwm.edu/onestop/students-called-to-active-duty/">uwm.edu/onestop/students-called-to-active-duty</a></p>
+
+      <h3>Discriminatory Conduct (including Sexual Harassment)</h3>
+      <p>Definitions of discrimination, harassment, abuse of power, and the reporting requirements of discriminatory conduct are found at: <a href="https://apps.uwm.edu/secu-policies/storage/other/SAAP%205-1.%20Discriminatory%20Conduct%20Policy.pdf">SAAP 5-1: Discriminatory Conduct Policy (PDF)</a></p>
+      <p><strong>Title IX / Sexual Violence.</strong> Title IX is a federal law that prohibits sex discrimination in education programs or activities, and UWM policy prohibits such conduct. This includes sexual violence, which may include sexual harassment, sexual assault, relationship violence, and/or stalking in all educational programs and education-related areas. UWM strongly encourages its students to report any instance of sex discrimination to UWM's Title IX Coordinator (<a href="mailto:titleix@uwm.edu">titleix@uwm.edu</a>). Whether or not a student wishes to report an incident of sexual violence, the Title IX Coordinator can connect students to resources at UWM and/or in the community including, but not limited to, victim advocacy, medical and counseling services, and/or law enforcement. For more information, please visit: <a href="https://uwm.edu/titleix/">uwm.edu/titleix</a></p>
+
+      <h3>LGBTQ+ Resources</h3>
+      <p><a href="http://uwm.edu/lgbtrc/">uwm.edu/lgbtrc</a></p>
+
+      <h3>Academic Misconduct</h3>
+      <p>Policies for addressing students cheating on exams or plagiarism can be found at: <a href="https://uwm.edu/deanofstudents/instructor-academic-misconduct-process/">uwm.edu/deanofstudents/instructor-academic-misconduct-process</a></p>
+
+      <h3>Complaint Procedures</h3>
+      <p>Students may direct complaints to the head of the academic unit or department in which the complaint occurs. If the complaint allegedly violates a specific university policy, it may be directed to the head of the department or academic unit in which the complaint occurred or to the appropriate university office responsible for enforcing the policy: <a href="https://apps.uwm.edu/secu-policies/storage/other/SAAP%205-1.%20Discriminatory%20Conduct%20Policy.pdf">SAAP 5-1: Discriminatory Conduct Policy (PDF)</a></p>
+
+      <h3>Grade Appeal Procedures</h3>
+      <p>Procedures for student grade appeal appear at: <a href="http://www4.uwm.edu/secu/docs/other/S28.htm">UWM S28 Grade Appeal Policy</a></p>
+
+      <h3>Final Examination Policy</h3>
+      <p>Policies can be found at: <a href="https://apps.uwm.edu/secu-policies/storage/other/SAAP%201-9.%20Final%20Examinations.pdf">SAAP 1-9: Final Examinations (PDF)</a></p>
+    </section>
+
+  </div><!-- /.page-wrap -->
+
+</body>
+</html>
