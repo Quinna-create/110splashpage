@@ -519,7 +519,7 @@
         if (!ctx) buildAmbient();
         if (ctx.state === 'suspended') ctx.resume().catch(function () {});
         master.gain.cancelScheduledValues(ctx.currentTime);
-        master.gain.linearRampToValueAtTime(0.30, ctx.currentTime + 5.0);
+        master.gain.linearRampToValueAtTime(0.34, ctx.currentTime + 5.0);
         btn.textContent = '🔊';
       }
 
