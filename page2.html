@@ -203,9 +203,9 @@
 
     /* ── Music toggle ────────────────────────────────────────────── */
     #music-btn {
-      position: fixed;
-      bottom: 22px;
-      right: 6%;
+      position: static;
+      margin-top: 10px;
+      align-self: flex-end;
       background: none;
       border: none;
       font-size: 1.3rem;
@@ -235,13 +235,12 @@
       <a href="https://profquinn.com/" class="start-btn">Load</a>
       <span class="menu-item">Settings</span>
       <span class="menu-item">About</span>
+      <button id="music-btn" title="Toggle music">🔊</button>
     </div>
   </div>
 
   <div id="enter-arrow" title="Enter">›</div>
-
   <div class="professor">Professor Aragorn Quinn</div>
-  <button id="music-btn" title="Toggle music">🔊</button>
 
   <script>
     /* ─────────────────────────────────────────────────────────────
