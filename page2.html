@@ -431,9 +431,10 @@
       if (!Ctx) return;
 
       let ctx, master;
-      let droneNodes = [];
-      let arpTimer   = null;
-      let playing    = false;
+      let droneNodes  = [];
+      let arpTimer    = null;
+      let fadeTimer   = null;
+      let playing     = false;
 
       const btn = document.getElementById('music-btn');
 
@@ -520,12 +521,23 @@
         master.gain.cancelScheduledValues(ctx.currentTime);
         master.gain.linearRampToValueAtTime(0.38, ctx.currentTime + 5.0);
         btn.textContent = '🔊';
+        /* ── 30-second fade-out (5 s duration) ── */
+        clearTimeout(fadeTimer);
+        fadeTimer = setTimeout(function () {
+          if (!playing || !ctx || !master) return;
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+          master.gain.linearRampToValueAtTime(0, ctx.currentTime + 5.0);
+          setTimeout(stopMusic, 5000);
+        }, 30000);
       }
 
       function stopMusic() {
         playing = false;
         clearTimeout(arpTimer);
         arpTimer = null;
+        clearTimeout(fadeTimer);
+        fadeTimer = null;
         if (ctx && master) {
           master.gain.cancelScheduledValues(ctx.currentTime);
           master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
