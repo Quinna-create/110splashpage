@@ -74,12 +74,23 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
+    .patch {
+      display: inline-block;
+      margin: 0 0 .75rem;
+      padding: .2rem .5rem;
+      border-radius: 6px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: .8rem;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Course Widget Dashboard</h1>
     <p class="sub">Aggregated results from all class widgets.</p>
+    <div class="patch">PATCH_VERSION: pickMap-v1</div>
     <div id="error" class="error"></div>
     <div id="grid" class="grid"></div>
   </div>
@@ -115,6 +126,21 @@
       return el;
     }
 
+    function pickMap(agg, prefix) {
+      const direct = agg?.[prefix];
+      const result =
+        (direct && typeof direct === 'object' && !Array.isArray(direct))
+          ? { ...direct }
+          : {};
+
+      for (const [k, v] of Object.entries(agg || {})) {
+        if (!k.startsWith(prefix + '.')) continue;
+        const subKey = k.slice(prefix.length + 1);
+        result[subKey] = v;
+      }
+      return result;
+    }
+
     function renderPollCard(widgetMeta, agg) {
       const card = document.createElement('article');
       card.className = 'card';
@@ -132,11 +158,11 @@
       totalLbl.style.color = '#475569';
       card.append(totalLbl, total);
 
-      const year = agg?.year || {};
-      const jp = agg?.japaneseProgram || {};
-      const motivation = agg?.motivation || {};
-      const majors = agg?.majors || {};
-      const majorLabels = agg?.majorLabels || {};
+      const year = pickMap(agg, 'year');
+      const jp = pickMap(agg, 'japaneseProgram');
+      const motivation = pickMap(agg, 'motivation');
+      const majors = pickMap(agg, 'majors');
+      const majorLabels = pickMap(agg, 'majorLabels');
 
       card.append(sectionTitle('Year breakdown'));
       if (Object.keys(year).length === 0) {
