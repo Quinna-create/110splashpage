@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Course Widget Dashboard</title>
+  <title>Course Poll Dashboard</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -12,33 +16,88 @@
       background: #f1f5f9;
       color: #0f172a;
     }
+
     .wrap {
       max-width: 1100px;
       margin: 0 auto;
     }
-    h1 { margin: 0 0 0.25rem; }
-    p.sub { margin: 0 0 1rem; color: #475569; }
+
+    h1 { 
+      margin: 0 0 0.25rem; 
+    }
+
+    p.sub { 
+      margin: 0 0 1rem; 
+      color: #475569; 
+    }
+
+    /* Tab styles */
+    .tabs-container {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #64748b;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .tab-button:hover {
+      color: #0f172a;
+      background: #f8fafc;
+    }
+
+    .tab-button.active {
+      color: #1d4ed8;
+      border-bottom-color: #1d4ed8;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 1rem;
     }
+
     .card {
       background: #fff;
       border-radius: 12px;
       padding: 1rem;
       box-shadow: 0 2px 10px rgba(0,0,0,.08);
     }
+
     .card h2 {
       font-size: 1.08rem;
       margin: 0 0 .65rem;
     }
+
     .stat {
       font-size: 1.9rem;
       font-weight: 700;
       margin: 0.25rem 0 0.7rem;
       color: #1d4ed8;
     }
+
     .kv {
       margin: .25rem 0;
       display: flex;
@@ -48,11 +107,16 @@
       padding-bottom: 0.2rem;
       font-size: .95rem;
     }
-    .kv span:last-child { font-weight: 600; }
+
+    .kv span:last-child { 
+      font-weight: 600; 
+    }
+
     .empty {
       color: #64748b;
       font-style: italic;
     }
+
     .error {
       color: #991b1b;
       background: #fef2f2;
@@ -62,6 +126,7 @@
       margin-bottom: 1rem;
       display: none;
     }
+
     .debug {
       margin-top: .75rem;
       padding: .65rem;
@@ -74,6 +139,7 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
+
     .patch {
       display: inline-block;
       margin: 0 0 .75rem;
@@ -84,15 +150,47 @@
       font-size: .8rem;
       font-weight: 700;
     }
+
+    .loading {
+      color: #64748b;
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .no-tabs {
+      color: #64748b;
+      font-style: italic;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    .tab-badge {
+      display: inline-block;
+      background: #1d4ed8;
+      color: white;
+      border-radius: 12px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Course Widget Dashboard</h1>
-    <p class="sub">Aggregated results from all class widgets.</p>
-    <div class="patch">PATCH_VERSION: pickMap-v1</div>
+    <h1>Course Poll Dashboard</h1>
+    <p class="sub">Live poll results from your async class.</p>
+    <div class="patch">PATCH_VERSION: tabbed-dashboard-v2</div>
     <div id="error" class="error"></div>
-    <div id="grid" class="grid"></div>
+    
+    <!-- Tabs container -->
+    <div id="tabs-container" class="tabs-container"></div>
+
+    <!-- Tab contents -->
+    <div id="tabs-content"></div>
   </div>
 
   <script type="module">
@@ -101,11 +199,28 @@
       collection,
       getDocs,
       doc,
-      getDoc
+      getDoc,
+      onSnapshot,
+      query,
+      where
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const grid = document.getElementById('grid');
+    const tabsContainer = document.getElementById('tabs-container');
+    const tabsContent = document.getElementById('tabs-content');
     const errorBox = document.getElementById('error');
+    
+    let currentActiveTab = null;
+    const tabMap = new Map(); // widgetId -> tab element
+    const contentMap = new Map(); // widgetId -> content element
+
+    function showError(message) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = message;
+    }
+
+    function hideError() {
+      errorBox.style.display = 'none';
+    }
 
     function addKV(container, label, value) {
       const row = document.createElement('div');
@@ -213,6 +328,133 @@
       return card;
     }
 
+    function createTabButton(widgetMeta) {
+      const button = document.createElement('button');
+      button.className = 'tab-button';
+      button.dataset.widgetId = widgetMeta.widgetId;
+      
+      const title = widgetMeta.title || widgetMeta.widgetId;
+      button.textContent = title;
+      
+      button.addEventListener('click', () => switchTab(widgetMeta.widgetId));
+      
+      return button;
+    }
+
+    function createTabContent(widgetMeta, widgetId) {
+      const div = document.createElement('div');
+      div.className = 'tab-content';
+      div.dataset.widgetId = widgetId;
+      
+      const gridDiv = document.createElement('div');
+      gridDiv.className = 'grid';
+      
+      const loadingMsg = document.createElement('p');
+      loadingMsg.className = 'loading';
+      loadingMsg.textContent = 'Loading poll data...';
+      gridDiv.appendChild(loadingMsg);
+      
+      div.appendChild(gridDiv);
+      
+      return div;
+    }
+
+    async function loadAndRenderTab(widgetId) {
+      const contentEl = contentMap.get(widgetId);
+      if (!contentEl) return;
+      
+      const gridDiv = contentEl.querySelector('.grid');
+      
+      try {
+        // Get widget metadata
+        const local = await fetch('../widgets.json').then(r => r.json()).catch(() => []);
+        const allWidgets = local.length > 0 ? local : (await getDocs(collection(db, 'widgets'))).docs.map(d => d.data());
+        const widgetMeta = allWidgets.find(w => w.widgetId === widgetId);
+        
+        if (!widgetMeta) {
+          gridDiv.innerHTML = '<p class="empty">Widget metadata not found.</p>';
+          return;
+        }
+
+        // Get aggregate data
+        const aggSnap = await getDoc(doc(db, 'aggregates', widgetId));
+        const agg = aggSnap.exists() ? aggSnap.data() : {};
+
+        // Clear and render
+        gridDiv.innerHTML = '';
+        
+        if (widgetMeta.type === 'poll') {
+          gridDiv.appendChild(renderPollCard(widgetMeta, agg));
+        } else {
+          const card = document.createElement('article');
+          card.className = 'card';
+          card.innerHTML = `<h2>${widgetMeta.title || widgetId}</h2><p class="empty">No renderer yet for widget type: ${widgetMeta.type}</p>`;
+          gridDiv.appendChild(card);
+        }
+
+        // Set up real-time listener for aggregate updates
+        const unsubscribe = onSnapshot(doc(db, 'aggregates', widgetId), (snap) => {
+          if (snap.exists() && contentEl.classList.contains('active')) {
+            const updatedAgg = snap.data();
+            gridDiv.innerHTML = '';
+            if (widgetMeta.type === 'poll') {
+              gridDiv.appendChild(renderPollCard(widgetMeta, updatedAgg));
+            }
+          }
+        });
+
+        // Store unsubscribe for cleanup if needed
+        contentEl.unsubscribe = unsubscribe;
+
+      } catch (err) {
+        console.error(`Error loading tab ${widgetId}:`, err);
+        gridDiv.innerHTML = '<p class="empty">Error loading poll data. Check console.</p>';
+      }
+    }
+
+    function switchTab(widgetId) {
+      // Deactivate old tab
+      if (currentActiveTab) {
+        const oldBtn = tabMap.get(currentActiveTab);
+        const oldContent = contentMap.get(currentActiveTab);
+        if (oldBtn) oldBtn.classList.remove('active');
+        if (oldContent) oldContent.classList.remove('active');
+      }
+
+      // Activate new tab
+      const newBtn = tabMap.get(widgetId);
+      const newContent = contentMap.get(widgetId);
+      if (newBtn) newBtn.classList.add('active');
+      if (newContent) newContent.classList.add('active');
+
+      currentActiveTab = widgetId;
+
+      // Load data for this tab
+      loadAndRenderTab(widgetId);
+    }
+
+    async function addTab(widgetMeta) {
+      const widgetId = widgetMeta.widgetId;
+
+      // Skip if already exists
+      if (tabMap.has(widgetId)) return;
+
+      // Create tab button
+      const tabBtn = createTabButton(widgetMeta);
+      tabsContainer.appendChild(tabBtn);
+      tabMap.set(widgetId, tabBtn);
+
+      // Create tab content
+      const tabContent = createTabContent(widgetMeta, widgetId);
+      tabsContent.appendChild(tabContent);
+      contentMap.set(widgetId, tabContent);
+
+      // If this is the first tab, activate it
+      if (!currentActiveTab) {
+        switchTab(widgetId);
+      }
+    }
+
     async function loadWidgets() {
       const local = await fetch('../widgets.json').then(r => r.json()).catch(() => []);
 
@@ -224,33 +466,33 @@
 
     async function main() {
       try {
+        hideError();
         const widgets = await loadWidgets();
 
         if (!widgets.length) {
-          const p = document.createElement('p');
-          p.className = 'empty';
-          p.textContent = 'No active widgets found.';
-          grid.appendChild(p);
+          tabsContent.innerHTML = '<div class="no-tabs"><p class="empty">No active polls found. Check back soon!</p></div>';
           return;
         }
 
+        // Add all existing widgets as tabs
         for (const w of widgets) {
-          const aggSnap = await getDoc(doc(db, 'aggregates', w.widgetId));
-          const agg = aggSnap.exists() ? aggSnap.data() : {};
-
-          if (w.type === 'poll') {
-            grid.appendChild(renderPollCard(w, agg));
-          } else {
-            const card = document.createElement('article');
-            card.className = 'card';
-            card.innerHTML = `<h2>${w.title || w.widgetId}</h2><p class="empty">No renderer yet for widget type: ${w.type}</p>`;
-            grid.appendChild(card);
-          }
+          await addTab(w);
         }
+
+        // Set up real-time listener for new widgets
+        const q = query(collection(db, 'widgets'), where('active', '!=', false));
+        const unsubscribe = onSnapshot(q, (snap) => {
+          snap.docChanges().forEach((change) => {
+            if (change.type === 'added' || change.type === 'modified') {
+              const widget = change.doc.data();
+              addTab(widget).catch(console.error);
+            }
+          });
+        });
+
       } catch (err) {
-        console.error(err);
-        errorBox.style.display = 'block';
-        errorBox.textContent = 'Could not load dashboard data. Check Firebase config and Firestore rules.';
+        console.error('Error in dashboard:', err);
+        showError('Could not load dashboard. Check Firebase config and Firestore rules.');
       }
     }
 
