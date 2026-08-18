@@ -1,1 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Student Poll</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      font-size: 1.35rem;
+      margin: 0 0 0.5rem;
+    }
+    p.note {
+      margin: 0 0 1rem;
+      font-size: 0.95rem;
+      color: #334155;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 0.85rem 0 0.35rem;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.98rem;
+      box-sizing: border-box;
+      background: #fff;
+    }
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .msg {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      min-height: 1.2em;
+    }
+    .ok { color: #166534; }
+    .err { color: #991b1b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Beginning of Class Poll</h1>
+    <p class="note">Anonymous poll. Please answer all questions.</p>
 
+    <form id="studentPoll">
+      <label for="year">1) What year are you?</label>
+      <select id="year" name="year" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="Freshman">Freshman</option>
+        <option value="Sophomore">Sophomore</option>
+        <option value="Junior">Junior</option>
+        <option value="Senior">Senior</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="major">2) What is your major? (fill in the blank)</label>
+      <input id="major" name="major" type="text" maxlength="120" required placeholder="Type your major" />
+
+      <label for="japaneseProgram">3) Have you taken classes in the Japanese program before?</label>
+      <select id="japaneseProgram" name="japaneseProgram" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label for="motivation">4) What motivated you to enroll in the course?</label>
+      <select id="motivation" name="motivation" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="I needed an online async course to fit my schedule">I needed an online async course to fit my schedule</option>
+        <option value="I'm a big fan of Japanese culture">I'm a big fan of Japanese culture</option>
+        <option value="I am a huge fan of Professor Quinn (anonymous, no brownie points!)">I am a huge fan of Professor Quinn (anonymous, no brownie points!)</option>
+        <option value="I needed a class to fill my GER requirement">I needed a class to fill my GER requirement</option>
+      </select>
+
+      <button type="submit">Submit</button>
+      <div id="message" class="msg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      doc,
+      runTransaction,
+      increment
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 1) Replace with your Firebase project config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('studentPoll');
+    const msg = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      msg.className = 'msg';
+
+      const year = form.year.value;
+      const major = form.major.value.trim();
+      const japaneseProgram = form.japaneseProgram.value;
+      const motivation = form.motivation.value;
+
+      if (!year || !major || !japaneseProgram || !motivation) {
+        msg.textContent = 'Please answer all questions.';
+        msg.classList.add('err');
+        return;
+      }
+
+      const payload = {
+        year,
+        major,
+        japaneseProgram,
+        motivation,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        await addDoc(collection(db, 'pollResponses'), payload);
+
+        await runTransaction(db, async (tx) => {
+          const totalsRef = doc(db, 'pollAggregates', 'totals');
+          const snap = await tx.get(totalsRef);
+          if (!snap.exists()) {
+            tx.set(totalsRef, {
+              totalResponses: 0,
+              year: {},
+              japaneseProgram: {},
+              motivation: {},
+              majors: {}
+            });
+          }
+
+          tx.set(totalsRef, {
+            totalResponses: increment(1),
+            [`year.${year}`]: increment(1),
+            [`japaneseProgram.${japaneseProgram}`]: increment(1),
+            [`motivation.${motivation}`]: increment(1),
+            [`majors.${major}`]: increment(1)
+          }, { merge: true });
+        });
+
+        form.reset();
+        msg.textContent = 'Thank you! Your anonymous response was submitted.';
+        msg.classList.add('ok');
+      } catch (error) {
+        console.error(error);
+        msg.textContent = 'Submission failed. Please try again in a moment.';
+        msg.classList.add('err');
+      }
+    });
+  </script>
+</body>
+</html>
