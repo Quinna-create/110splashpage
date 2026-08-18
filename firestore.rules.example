@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public-ish widget metadata and aggregate counts.
+    // If you want instructor-only dashboard, tighten these read rules and add auth.
+    match /widgets/{widgetId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /aggregates/{widgetId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Anonymous responses accepted from embedded widgets.
+    match /responses/{responseId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // Default deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

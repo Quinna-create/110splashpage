@@ -1,0 +1,10 @@
+[
+  {
+    "widgetId": "poll-01",
+    "title": "Beginning of Class Poll",
+    "type": "poll",
+    "path": "widgets/poll-01.html",
+    "questions": 4,
+    "active": true
+  }
+]

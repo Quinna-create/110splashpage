@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Widget Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 { margin: 0 0 0.25rem; }
+    p.sub { margin: 0 0 1rem; color: #475569; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .card h2 {
+      font-size: 1.08rem;
+      margin: 0 0 .65rem;
+    }
+    .stat {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin: 0.25rem 0 0.7rem;
+      color: #1d4ed8;
+    }
+    .kv {
+      margin: .25rem 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 0.2rem;
+      font-size: .95rem;
+    }
+    .kv span:last-child { font-weight: 600; }
+    .empty {
+      color: #64748b;
+      font-style: italic;
+    }
+    .error {
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: .6rem .75rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Course Widget Dashboard</h1>
+    <p class="sub">Aggregated results from all class widgets.</p>
+    <div id="error" class="error"></div>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script type="module">
+    import { db } from "../js/firebase-init.js";
+    import {
+      collection,
+      getDocs,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const grid = document.getElementById('grid');
+    const errorBox = document.getElementById('error');
+
+    function addKV(container, label, value) {
+      const row = document.createElement('div');
+      row.className = 'kv';
+      const left = document.createElement('span');
+      left.textContent = label;
+      const right = document.createElement('span');
+      right.textContent = value;
+      row.append(left, right);
+      container.appendChild(row);
+    }
+
+    function sectionTitle(text) {
+      const el = document.createElement('h3');
+      el.style.margin = '0.85rem 0 0.35rem';
+      el.style.fontSize = '0.98rem';
+      el.textContent = text;
+      return el;
+    }
+
+    function renderPollCard(widgetMeta, agg) {
+      const card = document.createElement('article');
+      card.className = 'card';
+      const title = document.createElement('h2');
+      title.textContent = widgetMeta.title || widgetMeta.widgetId;
+
+      const total = document.createElement('p');
+      total.className = 'stat';
+      total.textContent = String(agg?.totalResponses ?? 0);
+
+      card.append(title);
+      const totalLbl = document.createElement('div');
+      totalLbl.textContent = 'Total responses';
+      totalLbl.style.fontSize = '.9rem';
+      totalLbl.style.color = '#475569';
+      card.append(totalLbl, total);
+
+      const year = agg?.year || {};
+      const jp = agg?.japaneseProgram || {};
+      const motivation = agg?.motivation || {};
+      const majors = agg?.majors || {};
+      const majorLabels = agg?.majorLabels || {};
+
+      card.append(sectionTitle('Year breakdown'));
+      if (Object.keys(year).length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No data yet.';
+        card.append(empty);
+      } else {
+        Object.entries(year).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
+      }
+
+      card.append(sectionTitle('Japanese program before?'));
+      if (Object.keys(jp).length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No data yet.';
+        card.append(empty);
+      } else {
+        Object.entries(jp).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
+      }
+
+      card.append(sectionTitle('Motivation'));
+      if (Object.keys(motivation).length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No data yet.';
+        card.append(empty);
+      } else {
+        Object.entries(motivation).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
+      }
+
+      card.append(sectionTitle('Top majors'));
+      const majorEntries = Object.entries(majors).sort((a,b) => b[1]-a[1]).slice(0, 10);
+      if (majorEntries.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No data yet.';
+        card.append(empty);
+      } else {
+        majorEntries.forEach(([k,v]) => addKV(card, majorLabels[k] || k, v));
+      }
+
+      return card;
+    }
+
+    async function loadWidgets() {
+      const local = await fetch('../widgets.json').then(r => r.json()).catch(() => []);
+
+      if (local.length > 0) return local.filter(w => w.active !== false);
+
+      const snap = await getDocs(collection(db, 'widgets'));
+      return snap.docs.map(d => d.data()).filter(w => w.active !== false);
+    }
+
+    async function main() {
+      try {
+        const widgets = await loadWidgets();
+
+        if (!widgets.length) {
+          const p = document.createElement('p');
+          p.className = 'empty';
+          p.textContent = 'No active widgets found.';
+          grid.appendChild(p);
+          return;
+        }
+
+        for (const w of widgets) {
+          const aggSnap = await getDoc(doc(db, 'aggregates', w.widgetId));
+          const agg = aggSnap.exists() ? aggSnap.data() : {};
+
+          if (w.type === 'poll') {
+            grid.appendChild(renderPollCard(w, agg));
+          } else {
+            const card = document.createElement('article');
+            card.className = 'card';
+            card.innerHTML = `<h2>${w.title || w.widgetId}</h2><p class="empty">No renderer yet for widget type: ${w.type}</p>`;
+            grid.appendChild(card);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        errorBox.style.display = 'block';
+        errorBox.textContent = 'Could not load dashboard data. Check Firebase config and Firestore rules.';
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
