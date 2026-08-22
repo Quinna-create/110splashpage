@@ -6,5 +6,14 @@
     "path": "widgets/poll-01.html",
     "questions": 4,
     "active": true
+  },
+  {
+    "widgetId": "jpst-280-new-student-poll",
+    "title": "JPST 280: New Student Poll",
+    "type": "poll",
+    "path": "widgets/jpst-280-poll.html",
+    "questions": 4,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]
