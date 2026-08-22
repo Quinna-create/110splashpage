@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget: JPST 280 New Student Poll</title>
+  <style>
+    :root {
+      --bg1: #f8e8ff;
+      --bg2: #dff7ff;
+      --ink: #221b35;
+      --muted: #4c4a6a;
+      --card: rgba(255,255,255,.74);
+      --stroke: rgba(255,255,255,.65);
+      --primary1: #ff4fd8;
+      --primary2: #7c4dff;
+      --primary3: #22d3ee;
+      --ok: #166534;
+      --err: #991b1b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 79, 216, .20), transparent 35%),
+        radial-gradient(circle at 88% 10%, rgba(34, 211, 238, .22), transparent 36%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .card {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      padding: 1.3rem;
+      box-shadow:
+        0 14px 40px rgba(85, 54, 141, .16),
+        inset 0 1px 0 rgba(255,255,255,.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-size: 1.46rem;
+      margin: 0 0 .4rem;
+      line-height: 1.2;
+      letter-spacing: .01em;
+    }
+
+    p.note {
+      margin: 0 0 1rem;
+      font-size: .96rem;
+      color: var(--muted);
+    }
+
+    label {
+      display:block;
+      font-weight:700;
+      margin:.9rem 0 .38rem;
+    }
+
+    select, input[type="text"] {
+      width:100%;
+      padding:.72rem .82rem;
+      border:1px solid #d7c9ff;
+      border-radius:12px;
+      font-size:.98rem;
+      background: rgba(255,255,255,.95);
+      color: var(--ink);
+      transition: border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+    }
+
+    select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: #7c4dff;
+      box-shadow: 0 0 0 3px rgba(124, 77, 255, .2);
+      transform: translateY(-1px);
+    }
+
+    button {
+      margin-top:1.05rem;
+      width:100%;
+      background: linear-gradient(90deg, var(--primary1), var(--primary2), var(--primary3));
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      padding:.78rem .95rem;
+      font-size:1rem;
+      font-weight: 700;
+      cursor:pointer;
+      box-shadow: 0 8px 18px rgba(124,77,255,.34);
+      transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 20px rgba(124,77,255,.37);
+      filter: saturate(1.05);
+    }
+
+    button:active { transform: translateY(0); }
+
+    button:focus-visible {
+      outline: 3px solid rgba(34,211,238,.5);
+      outline-offset: 2px;
+    }
+
+    .msg {
+      margin-top:.75rem;
+      font-size:.95rem;
+      min-height:1.2em;
+    }
+
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+
+    @media (max-width: 640px) {
+      body { padding: .75rem; }
+      .card { border-radius: 16px; padding: 1rem; }
+      h1 { font-size: 1.26rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>JPST 280: New Student Poll</h1>
+    <p class="note">Anonymous poll. Please answer all questions.</p>
+
+    <form id="studentPoll">
+      <label for="year">1) What year are you?</label>
+      <select id="year" name="year" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="Freshman">Freshman</option>
+        <option value="Sophomore">Sophomore</option>
+        <option value="Junior">Junior</option>
+        <option value="Senior">Senior</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="major">2) What is your major? (fill in the blank)</label>
+      <input id="major" name="major" type="text" maxlength="120" required placeholder="Type your major" />
+
+      <label for="japaneseProgram">3) Have you taken classes in the Japanese program before?</label>
+      <select id="japaneseProgram" name="japaneseProgram" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label for="motivation">4) What motivated you to enroll in the course?</label>
+      <select id="motivation" name="motivation" required>
+        <option value="" selected disabled>Select one</option>
+        <option value="I needed an online async course to fit my schedule">I needed an online async course to fit my schedule</option>
+        <option value="I'm a big fan of Japanese culture">I'm a big fan of Japanese culture</option>
+        <option value="I am a huge fan of Professor Quinn (anonymous, no brownie points!)">I am a huge fan of Professor Quinn (anonymous, no brownie points!)</option>
+        <option value="I needed a class to fill my GER requirement">I needed a class to fill my GER requirement</option>
+      </select>
+
+      <button type="submit">Submit</button>
+      <div id="message" class="msg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { ensureWidgetRegistry, submitPollResponse } from "../js/widget-utils.js";
+
+    const WIDGET_ID = "jpst-280-new-student-poll";
+
+    await ensureWidgetRegistry({
+      widgetId: WIDGET_ID,
+      title: "JPST 280: New Student Poll",
+      type: "poll",
+      version: 1,
+      active: true,
+      classGroup: "jpst-280"
+    });
+
+    const form = document.getElementById('studentPoll');
+    const msg = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      msg.className = 'msg';
+
+      const year = form.year.value;
+      const major = form.major.value.trim();
+      const japaneseProgram = form.japaneseProgram.value;
+      const motivation = form.motivation.value;
+
+      if (!year || !major || !japaneseProgram || !motivation) {
+        msg.textContent = 'Please answer all questions.';
+        msg.classList.add('err');
+        return;
+      }
+
+      try {
+        await submitPollResponse({
+          widgetId: WIDGET_ID,
+          answers: { year, major, japaneseProgram, motivation }
+        });
+
+        form.reset();
+        msg.textContent = 'Thank you! Your anonymous response was submitted.';
+        msg.classList.add('ok');
+      } catch (error) {
+        console.error(error);
+        msg.textContent = 'Submission failed. Please try again in a moment.';
+        msg.classList.add('err');
+      }
+    });
+  </script>
+</body>
+</html>
