@@ -11,6 +11,7 @@
       --card: #ffffff;
       --text: #0f172a;
       --muted: #475569;
+      --meta: #64748b;
       --border: #dbe2f0;
       --accent: #2563eb;
       --accent-text: #ffffff;
@@ -73,7 +74,7 @@
     .meta {
       margin-top: 12px;
       font-size: 0.85rem;
-      color: #64748b;
+      color: var(--meta);
     }
 
     @media (max-width: 520px) {
@@ -96,14 +97,7 @@
     <h1>Welcome to 110</h1>
     <p>Check this space each week for concise updates, highlights, and important links.</p>
     <a class="cta" href="https://github.com/Quinna-create/110splashpage" target="_blank" rel="noopener noreferrer">Open the 110 Project Page</a>
-    <div class="meta" id="updated">Updated: —</div>
+    <div class="meta">Updated: 2026-08-22 00:00 UTC</div>
   </article>
-
-  <script>
-    (function () {
-      var updatedEl = document.getElementById('updated');
-      updatedEl.textContent = 'Updated: ' + new Date().toLocaleString();
-    })();
-  </script>
 </body>
 </html>
