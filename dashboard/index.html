@@ -130,6 +130,15 @@
       font-style: italic;
     }
 
+    .answer-row {
+      padding: .45rem .55rem;
+      margin-bottom: .35rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: .95rem;
+    }
+
     .error {
       color: #991b1b;
       background: #fef2f2;
@@ -261,9 +270,25 @@
 
       const year = pickMap(agg, 'year');
       const jp = pickMap(agg, 'japaneseProgram');
-      const motivation = pickMap(agg, 'motivation');
       const majors = pickMap(agg, 'majors');
       const majorLabels = pickMap(agg, 'majorLabels');
+
+      // Motivation: prefer JPST-specific keys, fallback to generic
+      const _motJpst = pickMap(agg, 'whatMotivatedMeToTakeThisClass');
+      const _motOpts = pickMap(agg, 'motivationOptions');
+      const motivationRaw =
+        Object.keys(_motJpst).length ? _motJpst
+          : Object.keys(_motOpts).length ? _motOpts
+          : pickMap(agg, 'motivation');
+
+      // Open-ended answers: support common aggregate field names
+      const openEndedRaw =
+        agg?.lastOpenEndedAnswers ??
+        agg?.openEndedAnswers ??
+        agg?.openEnded ??
+        agg?.finalQuestionAnswers ??
+        [];
+      const openEndedAnswers = Array.isArray(openEndedRaw) ? openEndedRaw : [];
 
       card.append(sectionTitle('Year breakdown'));
       if (Object.keys(year).length === 0) {
@@ -285,14 +310,14 @@
         Object.entries(jp).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
       }
 
-      card.append(sectionTitle('Motivation'));
-      if (Object.keys(motivation).length === 0) {
+      card.append(sectionTitle('What motivated me to take this class'));
+      if (Object.keys(motivationRaw).length === 0) {
         const empty = document.createElement('p');
         empty.className = 'empty';
         empty.textContent = 'No data yet.';
         card.append(empty);
       } else {
-        Object.entries(motivation).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
+        Object.entries(motivationRaw).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
       }
 
       card.append(sectionTitle('Top majors'));
@@ -304,6 +329,25 @@
         card.append(empty);
       } else {
         majorEntries.forEach(([k,v]) => addKV(card, majorLabels[k] || k, v));
+      }
+
+      // Last open-ended question responses
+      card.append(sectionTitle('Last open-ended question'));
+      if (openEndedAnswers.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No responses yet.';
+        card.append(empty);
+      } else {
+        const list = document.createElement('div');
+        list.style.marginTop = '.35rem';
+        openEndedAnswers.forEach((answer) => {
+          const row = document.createElement('div');
+          row.className = 'answer-row';
+          row.textContent = String(answer);
+          list.appendChild(row);
+        });
+        card.appendChild(list);
       }
 
       return card;
