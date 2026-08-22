@@ -130,6 +130,15 @@
       font-style: italic;
     }
 
+    .answer-row {
+      padding: .45rem .55rem;
+      margin-bottom: .35rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: .95rem;
+    }
+
     .error {
       color: #991b1b;
       background: #fef2f2;
@@ -265,14 +274,12 @@
       const majorLabels = pickMap(agg, 'majorLabels');
 
       // Motivation: prefer JPST-specific keys, fallback to generic
+      const _motJpst = pickMap(agg, 'whatMotivatedMeToTakeThisClass');
+      const _motOpts = pickMap(agg, 'motivationOptions');
       const motivationRaw =
-        (pickMap(agg, 'whatMotivatedMeToTakeThisClass') &&
-         Object.keys(pickMap(agg, 'whatMotivatedMeToTakeThisClass')).length)
-          ? pickMap(agg, 'whatMotivatedMeToTakeThisClass')
-          : (pickMap(agg, 'motivationOptions') &&
-             Object.keys(pickMap(agg, 'motivationOptions')).length)
-            ? pickMap(agg, 'motivationOptions')
-            : pickMap(agg, 'motivation');
+        Object.keys(_motJpst).length ? _motJpst
+          : Object.keys(_motOpts).length ? _motOpts
+          : pickMap(agg, 'motivation');
 
       // Open-ended answers: support common aggregate field names
       const openEndedRaw =
@@ -336,12 +343,7 @@
         list.style.marginTop = '.35rem';
         openEndedAnswers.forEach((answer) => {
           const row = document.createElement('div');
-          row.style.padding = '.45rem .55rem';
-          row.style.marginBottom = '.35rem';
-          row.style.background = '#f8fafc';
-          row.style.border = '1px solid #e2e8f0';
-          row.style.borderRadius = '8px';
-          row.style.fontSize = '.95rem';
+          row.className = 'answer-row';
           row.textContent = String(answer);
           list.appendChild(row);
         });
