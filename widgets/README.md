@@ -10,7 +10,7 @@ Both widgets include:
 - A welcome headline for 110
 - Brief supporting text for weekly updates
 - A CTA button linking to the repository
-- A JavaScript-populated `Updated:` timestamp using local datetime
+- A fixed `Updated:` timestamp string that reflects the published widget content
 
 ## Standard widget embed (recommended height ~240)
 

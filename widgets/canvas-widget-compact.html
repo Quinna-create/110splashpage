@@ -10,6 +10,7 @@
       --card: #ffffff;
       --text: #0f172a;
       --muted: #475569;
+      --meta: #64748b;
       --border: #dbe2f0;
       --accent: #2563eb;
       --accent-text: #ffffff;
@@ -82,7 +83,7 @@
     .meta {
       margin: 0;
       font-size: 0.75rem;
-      color: #64748b;
+      color: var(--meta);
       line-height: 1.2;
     }
   </style>
@@ -93,15 +94,8 @@
     <p>Weekly updates and quick links in one place.</p>
     <div class="row">
       <a class="cta" href="https://github.com/Quinna-create/110splashpage" target="_blank" rel="noopener noreferrer">Open Project</a>
-      <div class="meta" id="updated">Updated: —</div>
+      <div class="meta">Updated: 2026-08-22 00:00 UTC</div>
     </div>
   </article>
-
-  <script>
-    (function () {
-      var updatedEl = document.getElementById('updated');
-      updatedEl.textContent = 'Updated: ' + new Date().toLocaleString();
-    })();
-  </script>
 </body>
 </html>
