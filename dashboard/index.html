@@ -31,6 +31,19 @@
       color: #475569; 
     }
 
+    .tab-group {
+      margin-bottom: 1rem;
+    }
+
+    .tab-group-title {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #334155;
+      font-weight: 700;
+    }
+
     /* Tab styles */
     .tabs-container {
       display: flex;
@@ -150,8 +163,8 @@
     <p class="sub">Live poll results from your async class.</p>
     <div id="error" class="error"></div>
     
-    <!-- Tabs container -->
-    <div id="tabs-container" class="tabs-container"></div>
+    <!-- Tab groups container -->
+    <div id="tabs-groups-root"></div>
 
     <!-- Tab contents -->
     <div id="tabs-content"></div>
@@ -169,13 +182,22 @@
       where
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const tabsContainer = document.getElementById('tabs-container');
+    const tabsGroupsRoot = document.getElementById('tabs-groups-root');
     const tabsContent = document.getElementById('tabs-content');
     const errorBox = document.getElementById('error');
     
     let currentActiveTab = null;
     const tabMap = new Map(); // widgetId -> tab element
     const contentMap = new Map(); // widgetId -> content element
+    const groupContainerMap = new Map(); // group key -> tabs container element
+
+    const JPST_280_NEW_STUDENT_POLL_WIDGET = {
+      widgetId: 'jpst-280-new-student-poll',
+      title: 'New Student Poll',
+      type: 'poll',
+      active: true,
+      classGroup: 'jpst-280'
+    };
 
     function showError(message) {
       errorBox.style.display = 'block';
@@ -318,6 +340,61 @@
       return div;
     }
 
+    function normalizeClassGroup(value) {
+      return String(value || '').trim().toLowerCase();
+    }
+
+    function getGroupKey(widgetMeta) {
+      const normalizedId = normalizeClassGroup(widgetMeta.widgetId);
+      const normalizedTitle = normalizeClassGroup(widgetMeta.title);
+      const classGroup = normalizeClassGroup(widgetMeta.classGroup);
+      const course = normalizeClassGroup(widgetMeta.course);
+
+      if (
+        classGroup === 'jpst-280' ||
+        course === 'jpst-280' ||
+        normalizedId.includes('jpst-280') ||
+        normalizedTitle.includes('jpst 280')
+      ) {
+        return 'jpst-280';
+      }
+
+      return 'japan-110';
+    }
+
+    function getGroupLabel(groupKey) {
+      if (groupKey === 'jpst-280') return 'JPST 280 Polls';
+      return 'Japan 110 Responses';
+    }
+
+    function getOrCreateGroupTabsContainer(groupKey) {
+      if (groupContainerMap.has(groupKey)) {
+        return groupContainerMap.get(groupKey);
+      }
+
+      const section = document.createElement('section');
+      section.className = 'tab-group';
+      section.dataset.groupKey = groupKey;
+
+      const heading = document.createElement('h2');
+      heading.className = 'tab-group-title';
+      heading.textContent = getGroupLabel(groupKey);
+
+      const tabsContainer = document.createElement('div');
+      tabsContainer.className = 'tabs-container';
+
+      section.append(heading, tabsContainer);
+
+      if (groupKey === 'japan-110') {
+        tabsGroupsRoot.prepend(section);
+      } else {
+        tabsGroupsRoot.append(section);
+      }
+
+      groupContainerMap.set(groupKey, tabsContainer);
+      return tabsContainer;
+    }
+
     async function loadAndRenderTab(widgetId) {
       const contentEl = contentMap.get(widgetId);
       if (!contentEl) return;
@@ -328,7 +405,7 @@
         // Get widget metadata
         const local = await fetch('../widgets.json').then(r => r.json()).catch(() => []);
         const allWidgets = local.length > 0 ? local : (await getDocs(collection(db, 'widgets'))).docs.map(d => d.data());
-        const widgetMeta = allWidgets.find(w => w.widgetId === widgetId);
+        const widgetMeta = allWidgets.find(w => w.widgetId === widgetId) || (widgetId === JPST_280_NEW_STUDENT_POLL_WIDGET.widgetId ? JPST_280_NEW_STUDENT_POLL_WIDGET : null);
         
         if (!widgetMeta) {
           gridDiv.innerHTML = '<p class="empty">Widget metadata not found.</p>';
@@ -398,9 +475,12 @@
       // Skip if already exists
       if (tabMap.has(widgetId)) return;
 
+      const groupKey = getGroupKey(widgetMeta);
+      const groupTabsContainer = getOrCreateGroupTabsContainer(groupKey);
+
       // Create tab button
       const tabBtn = createTabButton(widgetMeta);
-      tabsContainer.appendChild(tabBtn);
+      groupTabsContainer.appendChild(tabBtn);
       tabMap.set(widgetId, tabBtn);
 
       // Create tab content
@@ -417,10 +497,20 @@
     async function loadWidgets() {
       const local = await fetch('../widgets.json').then(r => r.json()).catch(() => []);
 
-      if (local.length > 0) return local.filter(w => w.active !== false);
+      if (local.length > 0) {
+        const activeLocal = local.filter(w => w.active !== false);
+        if (!activeLocal.some(w => w.widgetId === JPST_280_NEW_STUDENT_POLL_WIDGET.widgetId)) {
+          activeLocal.push(JPST_280_NEW_STUDENT_POLL_WIDGET);
+        }
+        return activeLocal;
+      }
 
       const snap = await getDocs(collection(db, 'widgets'));
-      return snap.docs.map(d => d.data()).filter(w => w.active !== false);
+      const widgets = snap.docs.map(d => d.data()).filter(w => w.active !== false);
+      if (!widgets.some(w => w.widgetId === JPST_280_NEW_STUDENT_POLL_WIDGET.widgetId)) {
+        widgets.push(JPST_280_NEW_STUDENT_POLL_WIDGET);
+      }
+      return widgets;
     }
 
     async function main() {
