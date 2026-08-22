@@ -66,7 +66,7 @@
       margin:.9rem 0 .38rem;
     }
 
-    select, input[type="text"] {
+    select, input[type="text"], textarea {
       width:100%;
       padding:.72rem .82rem;
       border:1px solid #d7c9ff;
@@ -77,11 +77,23 @@
       transition: border-color .15s ease, box-shadow .15s ease, transform .08s ease;
     }
 
-    select:focus, input[type="text"]:focus {
+    select:focus, input[type="text"]:focus, textarea:focus {
       outline: none;
       border-color: #7c4dff;
       box-shadow: 0 0 0 3px rgba(124, 77, 255, .2);
       transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 5.2rem;
+      resize: vertical;
+      line-height: 1.35;
+    }
+
+    .field-help {
+      margin: .28rem 0 0;
+      font-size: .86rem;
+      color: var(--muted);
     }
 
     button {
@@ -163,6 +175,18 @@
         <option value="I needed a class to fill a graduation requirement">It satisfies a graduation requirement</option>
       </select>
 
+      <label for="background">5) Anything else you'd like your instructor to know about you or your background at the beginning of this class?</label>
+      <textarea
+        id="background"
+        name="background"
+        rows="3"
+        maxlength="280"
+        required
+        aria-describedby="backgroundHelp"
+        placeholder="Share a sentence or two you'd like your instructor to know"
+      ></textarea>
+      <p id="backgroundHelp" class="field-help">Please keep this to a sentence or two (up to 280 characters).</p>
+
       <button type="submit">Submit</button>
       <div id="message" class="msg" aria-live="polite"></div>
     </form>
@@ -194,8 +218,9 @@
       const major = form.major.value.trim();
       const japaneseProgram = form.japaneseProgram.value;
       const motivation = form.motivation.value;
+      const background = form.background.value.trim();
 
-      if (!year || !major || !japaneseProgram || !motivation) {
+      if (!year || !major || !japaneseProgram || !motivation || !background) {
         msg.textContent = 'Please answer all questions.';
         msg.classList.add('err');
         return;
@@ -204,7 +229,7 @@
       try {
         await submitPollResponse({
           widgetId: WIDGET_ID,
-          answers: { year, major, japaneseProgram, motivation }
+          answers: { year, major, japaneseProgram, motivation, background }
         });
 
         form.reset();
