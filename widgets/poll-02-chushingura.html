@@ -21,22 +21,29 @@
 
     * { box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: "Poppins", "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 1rem;
       color: var(--ink);
       background:
         radial-gradient(circle at 12% 20%, rgba(255, 79, 163, .28), transparent 34%),
         radial-gradient(circle at 84% 14%, rgba(34, 211, 238, .23), transparent 34%),
         radial-gradient(circle at 72% 86%, rgba(139, 92, 246, .25), transparent 36%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
 
     .card {
       max-width: 940px;
-      margin: 0 auto;
+      width: 100%;
       background: var(--card);
       border: 1px solid var(--stroke);
       border-radius: 22px;
