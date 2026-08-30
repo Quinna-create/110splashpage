@@ -24,6 +24,7 @@
     html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
     }
 
     body {
@@ -38,13 +39,14 @@
       background-position: center;
       background-repeat: no-repeat;
       padding: 2rem 1rem;
-      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .card {
       max-width: 940px;
       width: 100%;
-      margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--stroke);
       border-radius: 22px;
@@ -89,8 +91,9 @@
       margin: 0;
       line-height: 1.52;
       color: #fdf7ff;
-      word-wrap: break-word;
+      word-break: break-word;
       overflow-wrap: break-word;
+      white-space: normal;
     }
 
     .answers-block {
