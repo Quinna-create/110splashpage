@@ -75,7 +75,7 @@
       display: grid;
       grid-template-columns: 1.45fr 1fr;
       gap: 1rem;
-      align-items: start;
+      align-items: stretch;
     }
 
     .question-block {
@@ -83,6 +83,9 @@
       border: 1px solid rgba(255,255,255,.11);
       border-radius: 16px;
       padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     .question-title {
