@@ -48,8 +48,6 @@ export async function submitPollResponse({ widgetId, answers }) {
 
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(aggRef);
-    
-    // Initialize aggregate document if it doesn't exist
     if (!snap.exists()) {
       tx.set(aggRef, {
         widgetId,
@@ -68,16 +66,16 @@ export async function submitPollResponse({ widgetId, answers }) {
     };
 
     // For each answer field, increment the count for that value
-    for (const [fieldName, fieldValue] of Object.entries(answers)) {
+    for (const [fieldName, fieldValue] of Object.entries(answers || {})) {
       if (fieldValue == null) continue;
       
-      // If it looks like it needs a label (major, year, etc), store both the key and label
+      // If it's an object with value and label (e.g., { value: "immoral", label: "Immoral" })
       if (typeof fieldValue === 'object' && fieldValue.value && fieldValue.label) {
         const key = slugifyKey(fieldValue.value);
         updateObj[`${fieldName}.${key}`] = increment(1);
         updateObj[`${fieldName}Labels.${key}`] = fieldValue.label;
       } else {
-        // Simple string/number value
+        // Simple string/number value (e.g., "immoral" or just a string)
         const key = slugifyKey(fieldValue);
         updateObj[`${fieldName}.${key}`] = increment(1);
       }
