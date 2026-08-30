@@ -251,6 +251,35 @@
       return result;
     }
 
+    /**
+     * Get all aggregate field names from the agg object (excluding system fields and Labels)
+     */
+    function getAggregateFields(agg) {
+      const fields = new Set();
+      for (const key of Object.keys(agg || {})) {
+        // Skip system fields and label fields
+        if (key === 'widgetId' || key === 'courseId' || key === 'term' || 
+            key === 'totalResponses' || key === 'createdAt' || key === 'updatedAt' ||
+            key.endsWith('Labels')) {
+          continue;
+        }
+        // This is a top-level aggregate field (contains nested counts)
+        if (typeof agg[key] === 'object' && !Array.isArray(agg[key])) {
+          fields.add(key);
+        }
+      }
+      return Array.from(fields);
+    }
+
+    function formatFieldName(fieldName) {
+      // Convert camelCase to Title Case with spaces
+      return fieldName
+        .replace(/([A-Z])/g, ' $1')     // camelCase to spaces
+        .replace(/^./, str => str.toUpperCase()) // capitalize first
+        .replace(/_/g, ' ')              // underscores to spaces
+        .trim();
+    }
+
     function renderPollCard(widgetMeta, agg) {
       const card = document.createElement('article');
       card.className = 'card';
@@ -268,86 +297,38 @@
       totalLbl.style.color = '#475569';
       card.append(totalLbl, total);
 
-      const year = pickMap(agg, 'year');
-      const jp = pickMap(agg, 'japaneseProgram');
-      const majors = pickMap(agg, 'majors');
-      const majorLabels = pickMap(agg, 'majorLabels');
+      // Get all aggregate fields dynamically
+      const fields = getAggregateFields(agg);
 
-      // Motivation: prefer JPST-specific keys, fallback to generic
-      const _motJpst = pickMap(agg, 'whatMotivatedMeToTakeThisClass');
-      const _motOpts = pickMap(agg, 'motivationOptions');
-      const motivationRaw =
-        Object.keys(_motJpst).length ? _motJpst
-          : Object.keys(_motOpts).length ? _motOpts
-          : pickMap(agg, 'motivation');
-
-      // Open-ended answers: support common aggregate field names
-      const openEndedRaw =
-        agg?.lastOpenEndedAnswers ??
-        agg?.openEndedAnswers ??
-        agg?.openEnded ??
-        agg?.finalQuestionAnswers ??
-        [];
-      const openEndedAnswers = Array.isArray(openEndedRaw) ? openEndedRaw : [];
-
-      card.append(sectionTitle('Year breakdown'));
-      if (Object.keys(year).length === 0) {
+      if (fields.length === 0) {
         const empty = document.createElement('p');
         empty.className = 'empty';
-        empty.textContent = 'No data yet.';
+        empty.textContent = 'No response data yet.';
         card.append(empty);
       } else {
-        Object.entries(year).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
-      }
+        // Render each field as a section
+        fields.forEach((fieldName) => {
+          const fieldData = pickMap(agg, fieldName);
+          const labelMap = pickMap(agg, fieldName + 'Labels');
 
-      card.append(sectionTitle('Japanese program before?'));
-      if (Object.keys(jp).length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'empty';
-        empty.textContent = 'No data yet.';
-        card.append(empty);
-      } else {
-        Object.entries(jp).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
-      }
+          const formattedFieldName = formatFieldName(fieldName);
+          card.append(sectionTitle(formattedFieldName));
 
-      card.append(sectionTitle('What motivated me to take this class'));
-      if (Object.keys(motivationRaw).length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'empty';
-        empty.textContent = 'No data yet.';
-        card.append(empty);
-      } else {
-        Object.entries(motivationRaw).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => addKV(card, k, v));
-      }
-
-      card.append(sectionTitle('Top majors'));
-      const majorEntries = Object.entries(majors).sort((a,b) => b[1]-a[1]).slice(0, 10);
-      if (majorEntries.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'empty';
-        empty.textContent = 'No data yet.';
-        card.append(empty);
-      } else {
-        majorEntries.forEach(([k,v]) => addKV(card, majorLabels[k] || k, v));
-      }
-
-      // Last open-ended question responses
-      card.append(sectionTitle('Last open-ended question'));
-      if (openEndedAnswers.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'empty';
-        empty.textContent = 'No responses yet.';
-        card.append(empty);
-      } else {
-        const list = document.createElement('div');
-        list.style.marginTop = '.35rem';
-        openEndedAnswers.forEach((answer) => {
-          const row = document.createElement('div');
-          row.className = 'answer-row';
-          row.textContent = String(answer);
-          list.appendChild(row);
+          if (Object.keys(fieldData).length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'empty';
+            empty.textContent = 'No data yet.';
+            card.append(empty);
+          } else {
+            Object.entries(fieldData)
+              .sort((a, b) => b[1] - a[1])
+              .forEach(([k, v]) => {
+                // Use label if available, otherwise format the key
+                const label = labelMap[k] || formatFieldName(k);
+                addKV(card, label, v);
+              });
+          }
         });
-        card.appendChild(list);
       }
 
       return card;
