@@ -15,5 +15,14 @@
     "questions": 4,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "poll-02-chushingura",
+    "title": "JPST 280 Chushingura",
+    "type": "poll",
+    "path": "widgets/poll-02-chushingura.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]
