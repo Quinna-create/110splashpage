@@ -21,31 +21,26 @@
 
     * { box-sizing: border-box; }
 
-    html {
-      height: 100%;
+    html, body {
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      height: 100%;
       font-family: "Poppins", "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 1rem;
       color: var(--ink);
       background:
         radial-gradient(circle at 12% 20%, rgba(255, 79, 163, .28), transparent 34%),
         radial-gradient(circle at 84% 14%, rgba(34, 211, 238, .23), transparent 34%),
         radial-gradient(circle at 72% 86%, rgba(139, 92, 246, .25), transparent 36%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
-      background-attachment: fixed;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      padding: 2rem 1rem;
     }
 
     .card {
       max-width: 940px;
       width: 100%;
+      margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--stroke);
       border-radius: 22px;
@@ -171,7 +166,7 @@
     }
 
     @media (max-width: 640px) {
-      body { padding: .75rem; }
+      body { padding: 1.5rem .75rem; }
       .card { border-radius: 16px; padding: 1rem; }
       h1 { font-size: 1.22rem; }
       .question-title { font-size: .98rem; }
