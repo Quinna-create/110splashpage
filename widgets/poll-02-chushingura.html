@@ -178,18 +178,18 @@
       <div class="poll-layout">
         <section class="question-block" aria-labelledby="questionHeading">
           <p id="questionHeading" class="question-title">
-            Let's say you were faced with a dilemma in which your only two options were a) to act against your own moral code; or b) to break the law, with the consequence being that everyone you loved would be impoverished and banished. Would you choose the immoral or the illegal act?
+            Let's say you were faced with a dilemma in which your only two options were a) to act against your own moral code; or b) to break the law, with the consequence being that everyone you[...]
           </p>
         </section>
 
         <section class="answers-block" aria-label="Answer choices">
           <label class="option" for="answerImmoral">
-            <input id="answerImmoral" type="radio" name="dilemmaChoice" value="immoral" required />
+            <input id="answerImmoral" type="radio" name="dilemmaChoice" value="immoral" data-label="Immoral" required />
             <span>immoral</span>
           </label>
 
           <label class="option" for="answerIllegal">
-            <input id="answerIllegal" type="radio" name="dilemmaChoice" value="illegal" required />
+            <input id="answerIllegal" type="radio" name="dilemmaChoice" value="illegal" data-label="Illegal" required />
             <span>illegal</span>
           </label>
 
@@ -222,18 +222,25 @@
       msg.textContent = '';
       msg.className = 'msg';
 
-      const selected = form.querySelector('input[name="dilemmaChoice"]:checked')?.value || '';
-
-      if (!selected) {
+      const selectedInput = form.querySelector('input[name="dilemmaChoice"]:checked');
+      if (!selectedInput) {
         msg.textContent = 'Please select one answer.';
         msg.classList.add('err');
         return;
       }
 
+      const value = selectedInput.value;
+      const label = selectedInput.dataset.label || value;
+
       try {
         await submitPollResponse({
           widgetId: WIDGET_ID,
-          answers: { dilemmaChoice: selected }
+          answers: { 
+            dilemmaChoice: {
+              value: value,
+              label: label
+            }
+          }
         });
 
         form.reset();
