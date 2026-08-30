@@ -48,34 +48,41 @@ export async function submitPollResponse({ widgetId, answers }) {
 
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(aggRef);
+    
+    // Initialize aggregate document if it doesn't exist
     if (!snap.exists()) {
       tx.set(aggRef, {
         widgetId,
         courseId: courseConfig.courseId,
         term: courseConfig.term,
         totalResponses: 0,
-        year: {},
-        japaneseProgram: {},
-        motivation: {},
-        majors: {},
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
     }
 
-    const majorKey = slugifyKey(answers.major);
-    tx.set(
-      aggRef,
-      {
-        totalResponses: increment(1),
-        [`year.${answers.year}`]: increment(1),
-        [`japaneseProgram.${answers.japaneseProgram}`]: increment(1),
-        [`motivation.${answers.motivation}`]: increment(1),
-        [`majors.${majorKey}`]: increment(1),
-        [`majorLabels.${majorKey}`]: answers.major,
-        updatedAt: serverTimestamp()
-      },
-      { merge: true }
-    );
+    // Build the update object dynamically based on all answer fields
+    const updateObj = {
+      totalResponses: increment(1),
+      updatedAt: serverTimestamp()
+    };
+
+    // For each answer field, increment the count for that value
+    for (const [fieldName, fieldValue] of Object.entries(answers)) {
+      if (fieldValue == null) continue;
+      
+      // If it looks like it needs a label (major, year, etc), store both the key and label
+      if (typeof fieldValue === 'object' && fieldValue.value && fieldValue.label) {
+        const key = slugifyKey(fieldValue.value);
+        updateObj[`${fieldName}.${key}`] = increment(1);
+        updateObj[`${fieldName}Labels.${key}`] = fieldValue.label;
+      } else {
+        // Simple string/number value
+        const key = slugifyKey(fieldValue);
+        updateObj[`${fieldName}.${key}`] = increment(1);
+      }
+    }
+
+    tx.set(aggRef, updateObj, { merge: true });
   });
 }
