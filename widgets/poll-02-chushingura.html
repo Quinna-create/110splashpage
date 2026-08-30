@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget: JPST 280 Chushingura</title>
+  <style>
+    :root {
+      --bg1: #0f1023;
+      --bg2: #19163a;
+      --ink: #f8f6ff;
+      --muted: #d6cff7;
+      --card: rgba(20, 17, 45, 0.84);
+      --stroke: rgba(173, 147, 255, 0.42);
+      --accent1: #ff4fa3;
+      --accent2: #8b5cf6;
+      --accent3: #22d3ee;
+      --ok: #86efac;
+      --err: #fecaca;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(255, 79, 163, .28), transparent 34%),
+        radial-gradient(circle at 84% 14%, rgba(34, 211, 238, .23), transparent 34%),
+        radial-gradient(circle at 72% 86%, rgba(139, 92, 246, .25), transparent 36%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .card {
+      max-width: 940px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      padding: 1.3rem;
+      box-shadow:
+        0 16px 44px rgba(12, 9, 30, .55),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-size: 1.42rem;
+      margin: 0 0 .4rem;
+      line-height: 1.2;
+      letter-spacing: .01em;
+    }
+
+    p.note {
+      margin: 0 0 1rem;
+      font-size: .95rem;
+      color: var(--muted);
+    }
+
+    .poll-layout {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .question-block {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 16px;
+      padding: 1rem;
+    }
+
+    .question-title {
+      font-weight: 700;
+      font-size: 1.03rem;
+      margin: 0;
+      line-height: 1.52;
+      color: #fdf7ff;
+    }
+
+    .answers-block {
+      display: flex;
+      flex-direction: column;
+      gap: .68rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 16px;
+      padding: 1rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .72rem .8rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.24);
+      background: rgba(255,255,255,.07);
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: #b9a3ff;
+      box-shadow: 0 8px 18px rgba(139,92,246,.24);
+    }
+
+    .option input[type="radio"] {
+      accent-color: #ff4fa3;
+      transform: scale(1.12);
+    }
+
+    .option span {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: lowercase;
+      letter-spacing: .01em;
+    }
+
+    button {
+      margin-top: .98rem;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: .8rem .95rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 9px 20px rgba(93, 74, 187, .38);
+      transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(93, 74, 187, .44);
+      filter: saturate(1.08);
+    }
+
+    button:active { transform: translateY(0); }
+
+    .msg {
+      margin-top: .72rem;
+      font-size: .95rem;
+      min-height: 1.2em;
+    }
+
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+
+    @media (max-width: 760px) {
+      .poll-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: .75rem; }
+      .card { border-radius: 16px; padding: 1rem; }
+      h1 { font-size: 1.22rem; }
+      .question-title { font-size: .98rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>JPST 280 Chushingura Poll</h1>
+    <p class="note">Anonymous poll. Choose one answer and submit.</p>
+
+    <form id="chushinguraPoll">
+      <div class="poll-layout">
+        <section class="question-block" aria-labelledby="questionHeading">
+          <p id="questionHeading" class="question-title">
+            Let's say you were faced with a dilemma in which your only two options were a) to act against your own moral code; or b) to break the law, with the consequence being that everyone you loved would be impoverished and banished. Would you choose the immoral or the illegal act?
+          </p>
+        </section>
+
+        <section class="answers-block" aria-label="Answer choices">
+          <label class="option" for="answerImmoral">
+            <input id="answerImmoral" type="radio" name="dilemmaChoice" value="immoral" required />
+            <span>immoral</span>
+          </label>
+
+          <label class="option" for="answerIllegal">
+            <input id="answerIllegal" type="radio" name="dilemmaChoice" value="illegal" required />
+            <span>illegal</span>
+          </label>
+
+          <button type="submit">Submit</button>
+          <div id="message" class="msg" aria-live="polite"></div>
+        </section>
+      </div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { ensureWidgetRegistry, submitPollResponse } from "../js/widget-utils.js";
+
+    const WIDGET_ID = "poll-02-chushingura";
+
+    await ensureWidgetRegistry({
+      widgetId: WIDGET_ID,
+      title: "JPST 280 Chushingura",
+      type: "poll",
+      version: 1,
+      active: true,
+      classGroup: "jpst-280"
+    });
+
+    const form = document.getElementById('chushinguraPoll');
+    const msg = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      msg.className = 'msg';
+
+      const selected = form.querySelector('input[name="dilemmaChoice"]:checked')?.value || '';
+
+      if (!selected) {
+        msg.textContent = 'Please select one answer.';
+        msg.classList.add('err');
+        return;
+      }
+
+      try {
+        await submitPollResponse({
+          widgetId: WIDGET_ID,
+          answers: { dilemmaChoice: selected }
+        });
+
+        form.reset();
+        msg.textContent = 'Thank you! Your anonymous response was submitted.';
+        msg.classList.add('ok');
+      } catch (error) {
+        console.error(error);
+        msg.textContent = 'Submission failed. Please try again in a moment.';
+        msg.classList.add('err');
+      }
+    });
+  </script>
+</body>
+</html>
