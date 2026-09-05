@@ -24,5 +24,14 @@
     "questions": 1,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "jpst-280-dilemma-textbook-vs-novel",
+    "title": "JPST 280: Textbook vs Novel",
+    "type": "poll",
+    "path": "widgets/jpst-280-dilemma-textbook-vs-novel.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]
