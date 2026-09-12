@@ -149,18 +149,6 @@
       display: none;
     }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
     .followup-label {
       display: block;
       margin: .2rem 0 .4rem;
@@ -263,8 +251,7 @@
           </p>
         </div>
 
-        <fieldset class="answers-block" aria-describedby="questionHeading">
-          <legend class="sr-only">Would you find a liked fictional character detestable in real life?</legend>
+        <div class="answers-block" role="radiogroup" aria-labelledby="questionHeading">
           <label class="option" for="answerYes">
             <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" aria-controls="exampleField" aria-expanded="false" required />
             <span>yes</span>
@@ -290,7 +277,7 @@
 
           <button type="submit">Submit</button>
           <div id="message" class="msg" aria-live="polite"></div>
-        </fieldset>
+        </div>
       </div>
     </form>
   </div>
@@ -320,7 +307,6 @@
       const shouldShowExample = selectedInput?.value === 'yes';
 
       exampleField.hidden = !shouldShowExample;
-      exampleField.setAttribute('aria-hidden', String(!shouldShowExample));
       exampleInput.disabled = !shouldShowExample;
       exampleInput.required = shouldShowExample;
       yesInput.setAttribute('aria-expanded', String(shouldShowExample));
