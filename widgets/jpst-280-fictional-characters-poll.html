@@ -242,7 +242,7 @@
     <p class="note">This one is anonymous, so be honest.</p>
 
     <form id="fictionalCharactersPoll">
-      <fieldset class="poll-layout">
+      <fieldset class="poll-layout" aria-describedby="message">
         <legend id="questionHeading" class="question-legend">
           Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
         </legend>
@@ -265,7 +265,7 @@
               name="characterExample"
               maxlength="280"
               disabled
-              aria-describedby="characterExampleHelp"
+              aria-describedby="characterExampleHelp message"
               placeholder="Share one fictional character you would dislike in real life"
             ></textarea>
             <p id="characterExampleHelp" class="field-help">Required when you answer yes (up to 280 characters).</p>
