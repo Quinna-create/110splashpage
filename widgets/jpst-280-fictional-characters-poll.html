@@ -257,18 +257,16 @@
 
     <form id="fictionalCharactersPoll">
       <div class="poll-layout">
-        <section class="question-block" aria-labelledby="questionHeading">
+        <div class="question-block">
           <p id="questionHeading" class="question-title">
             Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
           </p>
-        </section>
+        </div>
 
         <fieldset class="answers-block">
-          <legend class="sr-only">
-            Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
-          </legend>
+          <legend class="sr-only">Answer choices</legend>
           <label class="option" for="answerYes">
-            <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" required />
+            <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" aria-controls="exampleField" aria-expanded="false" required />
             <span>yes</span>
           </label>
 
@@ -313,6 +311,7 @@
 
     const form = document.getElementById('fictionalCharactersPoll');
     const msg = document.getElementById('message');
+    const yesInput = document.getElementById('answerYes');
     const exampleField = document.getElementById('exampleField');
     const exampleInput = document.getElementById('characterExample');
 
@@ -321,8 +320,10 @@
       const shouldShowExample = selectedInput?.value === 'yes';
 
       exampleField.hidden = !shouldShowExample;
+      exampleField.setAttribute('aria-hidden', String(!shouldShowExample));
       exampleInput.disabled = !shouldShowExample;
       exampleInput.required = shouldShowExample;
+      yesInput.setAttribute('aria-expanded', String(shouldShowExample));
 
       if (!shouldShowExample) {
         exampleInput.value = '';
