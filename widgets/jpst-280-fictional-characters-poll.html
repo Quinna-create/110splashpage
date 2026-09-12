@@ -249,12 +249,12 @@
         </legend>
 
         <div class="answers-block">
-          <label class="option" for="answerYes">
+          <label class="option">
             <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" required />
             <span>yes</span>
           </label>
 
-          <label class="option" for="answerNo">
+          <label class="option">
             <input id="answerNo" type="radio" name="detestableCharacterAnswer" value="no" data-label="No" required />
             <span>no</span>
           </label>
@@ -284,14 +284,18 @@
 
     const WIDGET_ID = "jpst-280-fictional-characters-poll";
 
-    await ensureWidgetRegistry({
-      widgetId: WIDGET_ID,
-      title: "JPST 280: Fictional Characters Poll",
-      type: "poll",
-      version: 1,
-      active: true,
-      classGroup: "jpst-280"
-    });
+    try {
+      await ensureWidgetRegistry({
+        widgetId: WIDGET_ID,
+        title: "JPST 280: Fictional Characters Poll",
+        type: "poll",
+        version: 1,
+        active: true,
+        classGroup: "jpst-280"
+      });
+    } catch (error) {
+      console.error('Widget registry sync failed:', error);
+    }
     const form = document.getElementById('fictionalCharactersPoll');
     const msg = document.getElementById('message');
     const exampleField = document.getElementById('exampleField');
