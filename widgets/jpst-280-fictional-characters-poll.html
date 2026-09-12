@@ -296,16 +296,13 @@
       msg.textContent = message;
       msg.className = 'msg';
       msg.classList.add(kind);
-      const isError = kind === 'err';
-      msg.setAttribute('aria-live', isError ? 'assertive' : 'polite');
-      msg.setAttribute('role', isError ? 'alert' : 'status');
+      msg.setAttribute('aria-live', kind === 'err' ? 'assertive' : 'polite');
     }
 
     function clearMessage() {
       msg.textContent = '';
       msg.className = 'msg';
       msg.setAttribute('aria-live', 'polite');
-      msg.setAttribute('role', 'status');
     }
 
     function updateExampleField() {
