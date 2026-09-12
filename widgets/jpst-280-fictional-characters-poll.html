@@ -259,7 +259,7 @@
           </label>
 
           <div id="exampleField" class="followup-field" hidden>
-            <label class="followup-label" for="characterExample">Example</label>
+            <label class="followup-label" for="characterExample">Example of a fictional character you would find detestable in real life</label>
             <textarea
               id="characterExample"
               name="characterExample"
@@ -272,7 +272,7 @@
           </div>
 
           <button type="submit">Submit</button>
-          <div id="message" class="msg" aria-live="polite"></div>
+          <div id="message" class="msg" aria-live="polite" role="status"></div>
         </div>
       </fieldset>
     </form>
@@ -300,6 +300,22 @@
     const exampleField = document.getElementById('exampleField');
     const exampleInput = document.getElementById('characterExample');
 
+    function setMessage(message, kind) {
+      msg.textContent = message;
+      msg.className = 'msg';
+      msg.classList.add(kind);
+      const isError = kind === 'err';
+      msg.setAttribute('aria-live', isError ? 'assertive' : 'polite');
+      msg.setAttribute('role', isError ? 'alert' : 'status');
+    }
+
+    function clearMessage() {
+      msg.textContent = '';
+      msg.className = 'msg';
+      msg.setAttribute('aria-live', 'polite');
+      msg.setAttribute('role', 'status');
+    }
+
     function updateExampleField() {
       const selectedInput = form.querySelector('input[name="detestableCharacterAnswer"]:checked');
       const shouldShowExample = selectedInput?.value === 'yes';
@@ -323,13 +339,11 @@
       if (!form.reportValidity()) {
         return;
       }
-      msg.textContent = '';
-      msg.className = 'msg';
+      clearMessage();
 
       const selectedInput = form.querySelector('input[name="detestableCharacterAnswer"]:checked');
       if (!selectedInput) {
-        msg.textContent = 'Error: Please select one answer.';
-        msg.classList.add('err');
+        setMessage('Error: Please select one answer.', 'err');
         return;
       }
 
@@ -338,8 +352,7 @@
       const characterExample = exampleInput.value.trim();
 
       if (value === 'yes' && !characterExample) {
-        msg.textContent = 'Error: Please provide an example when you answer yes.';
-        msg.classList.add('err');
+        setMessage('Error: Please provide an example when you answer yes.', 'err');
         exampleInput.focus();
         return;
       }
@@ -366,12 +379,10 @@
 
         form.reset();
         updateExampleField();
-        msg.textContent = 'Success: Thank you! Your anonymous response was submitted.';
-        msg.classList.add('ok');
+        setMessage('Success: Thank you! Your anonymous response was submitted.', 'ok');
       } catch (error) {
         console.error(error);
-        msg.textContent = 'Error: Submission failed. Please try again in a moment.';
-        msg.classList.add('err');
+        setMessage('Error: Submission failed. Please try again in a moment.', 'err');
       }
     });
 
