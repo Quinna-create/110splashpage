@@ -219,6 +219,10 @@
       min-height: 1.2em;
     }
 
+    .msg:empty {
+      display: none;
+    }
+
     .ok { color: var(--ok); }
     .err { color: var(--err); }
 
@@ -273,7 +277,7 @@
           </div>
 
           <button type="submit">Submit</button>
-          <div id="message" class="msg" aria-live="polite" aria-atomic="true" role="status" hidden></div>
+          <div id="message" class="msg" aria-live="polite" aria-atomic="true" role="status"></div>
         </div>
       </fieldset>
     </form>
@@ -292,7 +296,6 @@
       msg.textContent = message;
       msg.className = 'msg';
       msg.classList.add(kind);
-      msg.hidden = !message;
       const isError = kind === 'err';
       msg.setAttribute('aria-live', isError ? 'assertive' : 'polite');
       msg.setAttribute('role', isError ? 'alert' : 'status');
@@ -301,7 +304,6 @@
     function clearMessage() {
       msg.textContent = '';
       msg.className = 'msg';
-      msg.hidden = true;
       msg.setAttribute('aria-live', 'polite');
       msg.setAttribute('role', 'status');
     }
@@ -368,7 +370,6 @@
         updateExampleField();
         setMessage('Success: Thank you! Your anonymous response was submitted.', 'ok');
       } catch (error) {
-        console.error(error);
         setMessage('Error: Submission failed. Please try again in a moment.', 'err');
       }
     });
