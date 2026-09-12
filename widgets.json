@@ -33,5 +33,14 @@
     "questions": 1,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "jpst-280-fictional-characters-poll",
+    "title": "JPST 280: Fictional Characters Poll",
+    "type": "poll",
+    "path": "widgets/jpst-280-fictional-characters-poll.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]

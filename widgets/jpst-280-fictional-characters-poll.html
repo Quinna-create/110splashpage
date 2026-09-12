@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget: JPST 280 Fictional Characters Poll</title>
+  <style>
+    :root {
+      --bg1: #0f1023;
+      --bg2: #19163a;
+      --ink: #f8f6ff;
+      --muted: #d6cff7;
+      --card: rgba(20, 17, 45, 0.84);
+      --stroke: rgba(173, 147, 255, 0.42);
+      --accent1: #ff4fa3;
+      --accent2: #8b5cf6;
+      --accent3: #22d3ee;
+      --ok: #86efac;
+      --err: #fecaca;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(255, 79, 163, .28), transparent 34%),
+        radial-gradient(circle at 84% 14%, rgba(34, 211, 238, .23), transparent 34%),
+        radial-gradient(circle at 72% 86%, rgba(139, 92, 246, .25), transparent 36%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+      background-position: center 10%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      padding: 3rem 1rem 0.5rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      max-width: 940px;
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      padding: 1.3rem;
+      box-shadow:
+        0 16px 44px rgba(12, 9, 30, .55),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-size: 1.42rem;
+      margin: 0 0 .4rem;
+      line-height: 1.2;
+      letter-spacing: .01em;
+    }
+
+    p.note {
+      margin: 0 0 1rem;
+      font-size: .95rem;
+      color: var(--muted);
+    }
+
+    .poll-layout {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 1rem;
+      align-items: stretch;
+      margin: 0;
+      min-inline-size: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .question-legend {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 16px;
+      color: #fdf7ff;
+      display: block;
+      font-size: 1.03rem;
+      font-weight: 700;
+      line-height: 1.52;
+      margin: 0;
+      max-width: 100%;
+      padding: 1rem;
+      width: 100%;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
+    .answers-block {
+      display: flex;
+      flex-direction: column;
+      gap: .68rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 16px;
+      margin: 0;
+      min-inline-size: 0;
+      padding: 1rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .72rem .8rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.24);
+      background: rgba(255,255,255,.07);
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: #b9a3ff;
+      box-shadow: 0 8px 18px rgba(139,92,246,.24);
+    }
+
+    .option input[type="radio"] {
+      accent-color: #ff4fa3;
+      transform: scale(1.12);
+      flex-shrink: 0;
+    }
+
+    .option span {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+
+    .followup-field[hidden] {
+      display: none;
+    }
+
+    .followup-label {
+      display: block;
+      margin: .2rem 0 .4rem;
+      font-size: .95rem;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 5.25rem;
+      padding: .72rem .82rem;
+      border: 1px solid rgba(185, 163, 255, .58);
+      border-radius: 12px;
+      font: inherit;
+      color: var(--ink);
+      background: rgba(255,255,255,.95);
+      resize: vertical;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+    }
+
+    textarea:focus-visible {
+      outline: none;
+      border-color: #7c4dff;
+      box-shadow: 0 0 0 3px rgba(124, 77, 255, .2);
+      transform: translateY(-1px);
+    }
+
+    textarea:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .field-help {
+      margin: .35rem 0 0;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    button {
+      margin-top: .3rem;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: .8rem .95rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 9px 20px rgba(93, 74, 187, .38);
+      transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(93, 74, 187, .44);
+      filter: saturate(1.08);
+    }
+
+    button:active { transform: translateY(0); }
+
+    button:focus-visible {
+      outline: 3px solid rgba(34, 211, 238, .65);
+      outline-offset: 2px;
+    }
+
+    .msg {
+      margin-top: .72rem;
+      font-size: .95rem;
+      min-height: 1.2em;
+    }
+
+    .msg:empty {
+      display: none;
+    }
+
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+
+    @media (max-width: 760px) {
+      .poll-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 2rem .75rem 0.5rem .75rem; }
+      .card { border-radius: 16px; padding: 1rem; }
+      h1 { font-size: 1.22rem; }
+      .question-legend { font-size: .98rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>JPST 280: Fictional Characters Poll</h1>
+    <p class="note">This widget does not ask for your name, so be honest.</p>
+
+    <form id="fictionalCharactersPoll">
+      <fieldset class="poll-layout" aria-describedby="answerHelp">
+        <legend id="questionHeading" class="question-legend">
+          Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
+        </legend>
+
+        <div class="answers-block">
+          <p id="answerHelp" class="field-help">Select Yes or No. If you answer Yes, provide an example below.</p>
+          <label class="option">
+            <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" required />
+            <span>Yes</span>
+          </label>
+
+          <label class="option">
+            <input id="answerNo" type="radio" name="detestableCharacterAnswer" value="no" data-label="No" required />
+            <span>No</span>
+          </label>
+
+          <div id="exampleField" class="followup-field" hidden>
+            <label class="followup-label" for="characterExample">Example of a fictional character you would find detestable in real life</label>
+            <textarea
+              id="characterExample"
+              name="characterExample"
+              maxlength="280"
+              disabled
+              aria-describedby="characterExampleHelp"
+              placeholder="Share one fictional character you would dislike in real life"
+            ></textarea>
+            <p id="characterExampleHelp" class="field-help">Required when you answer yes (up to 280 characters).</p>
+          </div>
+
+          <button type="submit">Submit</button>
+          <div id="successMessage" class="msg ok" aria-live="polite" aria-atomic="true" role="status" tabindex="-1" hidden></div>
+          <div id="errorMessage" class="msg err" aria-live="assertive" aria-atomic="true" role="alert" hidden></div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <script type="module">
+    import { submitPollResponse } from "../js/widget-utils.js";
+
+    const WIDGET_ID = "jpst-280-fictional-characters-poll";
+    const form = document.getElementById('fictionalCharactersPoll');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const exampleField = document.getElementById('exampleField');
+    const exampleInput = document.getElementById('characterExample');
+
+    function setMessage(message, kind) {
+      if (kind === 'err') {
+        successMessage.textContent = '';
+        successMessage.hidden = true;
+        errorMessage.hidden = false;
+        errorMessage.textContent = message;
+        return;
+      }
+
+      successMessage.hidden = false;
+      errorMessage.hidden = true;
+      errorMessage.textContent = '';
+      successMessage.textContent = message;
+      successMessage.focus();
+    }
+
+    function clearMessage() {
+      successMessage.textContent = '';
+      successMessage.hidden = true;
+      errorMessage.hidden = true;
+      errorMessage.textContent = '';
+    }
+
+    function updateExampleField() {
+      const selectedInput = form.querySelector('input[name="detestableCharacterAnswer"]:checked');
+      const shouldShowExample = selectedInput?.value === 'yes';
+
+      exampleField.hidden = !shouldShowExample;
+      exampleInput.disabled = !shouldShowExample;
+      exampleInput.required = shouldShowExample;
+
+      if (!shouldShowExample) {
+        exampleInput.value = '';
+      }
+    }
+
+    form.querySelectorAll('input[name="detestableCharacterAnswer"]').forEach((input) => {
+      input.addEventListener('change', updateExampleField);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!form.reportValidity()) {
+        return;
+      }
+      clearMessage();
+
+      const selectedInput = form.querySelector('input[name="detestableCharacterAnswer"]:checked');
+      if (!selectedInput) {
+        setMessage('Error: Please select one answer.', 'err');
+        return;
+      }
+
+      const value = selectedInput.value;
+      const label = selectedInput.dataset.label || value;
+      const characterExample = exampleInput.value.trim();
+
+      if (value === 'yes' && !characterExample) {
+        setMessage('Error: Please provide an example when you answer yes.', 'err');
+        exampleInput.focus();
+        return;
+      }
+
+      const answers = {
+        detestableCharacterAnswer: {
+          value,
+          label
+        }
+      };
+
+      if (value === 'yes') {
+        answers.characterExample = characterExample;
+      }
+
+      try {
+        await submitPollResponse({
+          widgetId: WIDGET_ID,
+          answers
+        });
+
+        form.reset();
+        updateExampleField();
+        setMessage('Success: Thank you! Your anonymous response was submitted.', 'ok');
+      } catch (error) {
+        setMessage('Error: Submission failed. Please try again in a moment.', 'err');
+      }
+    });
+
+    updateExampleField();
+  </script>
+</body>
+</html>
