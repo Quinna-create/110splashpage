@@ -279,22 +279,9 @@
   </div>
 
   <script type="module">
-    import { ensureWidgetRegistry, submitPollResponse } from "../js/widget-utils.js";
+    import { submitPollResponse } from "../js/widget-utils.js";
 
     const WIDGET_ID = "jpst-280-fictional-characters-poll";
-
-    try {
-      await ensureWidgetRegistry({
-        widgetId: WIDGET_ID,
-        title: "JPST 280: Fictional Characters Poll",
-        type: "poll",
-        version: 1,
-        active: true,
-        classGroup: "jpst-280"
-      });
-    } catch (error) {
-      console.error('Widget registry sync failed:', error);
-    }
     const form = document.getElementById('fictionalCharactersPoll');
     const msg = document.getElementById('message');
     const exampleField = document.getElementById('exampleField');
@@ -365,10 +352,7 @@
       };
 
       if (value === 'yes') {
-        answers.characterExample = {
-          value: characterExample,
-          label: characterExample
-        };
+        answers.characterExample = characterExample;
       }
 
       try {
