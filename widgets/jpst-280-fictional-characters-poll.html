@@ -140,7 +140,6 @@
     .option span {
       font-size: 1rem;
       font-weight: 600;
-      text-transform: lowercase;
       letter-spacing: .01em;
     }
 
@@ -251,12 +250,12 @@
         <div class="answers-block">
           <label class="option">
             <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" required />
-            <span>yes</span>
+            <span>Yes</span>
           </label>
 
           <label class="option">
             <input id="answerNo" type="radio" name="detestableCharacterAnswer" value="no" data-label="No" required />
-            <span>no</span>
+            <span>No</span>
           </label>
 
           <div id="exampleField" class="followup-field" hidden>
@@ -319,6 +318,10 @@
     });
 
     form.addEventListener('submit', async (e) => {
+      if (!form.reportValidity()) {
+        return;
+      }
+
       e.preventDefault();
       msg.textContent = '';
       msg.className = 'msg';
@@ -349,7 +352,10 @@
       };
 
       if (value === 'yes') {
-        answers.characterExample = characterExample;
+        answers.characterExample = {
+          value: characterExample,
+          label: characterExample
+        };
       }
 
       try {
