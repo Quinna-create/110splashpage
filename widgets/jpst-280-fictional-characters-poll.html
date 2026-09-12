@@ -318,11 +318,11 @@
     });
 
     form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
       if (!form.reportValidity()) {
         return;
       }
-
-      e.preventDefault();
       msg.textContent = '';
       msg.className = 'msg';
 
