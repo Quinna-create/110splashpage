@@ -277,7 +277,8 @@
           </div>
 
           <button type="submit">Submit</button>
-          <div id="message" class="msg" aria-live="polite" aria-atomic="true" role="status"></div>
+          <div id="successMessage" class="msg ok" aria-live="polite" aria-atomic="true" role="status"></div>
+          <div id="errorMessage" class="msg err" aria-live="assertive" aria-atomic="true" role="alert"></div>
         </div>
       </fieldset>
     </form>
@@ -288,21 +289,25 @@
 
     const WIDGET_ID = "jpst-280-fictional-characters-poll";
     const form = document.getElementById('fictionalCharactersPoll');
-    const msg = document.getElementById('message');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
     const exampleField = document.getElementById('exampleField');
     const exampleInput = document.getElementById('characterExample');
 
     function setMessage(message, kind) {
-      msg.textContent = message;
-      msg.className = 'msg';
-      msg.classList.add(kind);
-      msg.setAttribute('aria-live', kind === 'err' ? 'assertive' : 'polite');
+      if (kind === 'err') {
+        successMessage.textContent = '';
+        errorMessage.textContent = message;
+        return;
+      }
+
+      errorMessage.textContent = '';
+      successMessage.textContent = message;
     }
 
     function clearMessage() {
-      msg.textContent = '';
-      msg.className = 'msg';
-      msg.setAttribute('aria-live', 'polite');
+      successMessage.textContent = '';
+      errorMessage.textContent = '';
     }
 
     function updateExampleField() {
