@@ -109,6 +109,8 @@
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.11);
       border-radius: 16px;
+      margin: 0;
+      min-inline-size: 0;
       padding: 1rem;
     }
 
@@ -244,7 +246,7 @@
           </p>
         </section>
 
-        <section class="answers-block" aria-label="Answer choices">
+        <fieldset class="answers-block" aria-labelledby="questionHeading">
           <label class="option" for="answerYes">
             <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" required />
             <span>yes</span>
@@ -270,7 +272,7 @@
 
           <button type="submit">Submit</button>
           <div id="message" class="msg" aria-live="polite"></div>
-        </section>
+        </fieldset>
       </div>
     </form>
   </div>
