@@ -181,7 +181,7 @@
       transition: border-color .15s ease, box-shadow .15s ease, transform .08s ease;
     }
 
-    textarea:focus {
+    textarea:focus-visible {
       outline: none;
       border-color: #7c4dff;
       box-shadow: 0 0 0 3px rgba(124, 77, 255, .2);
@@ -222,6 +222,11 @@
 
     button:active { transform: translateY(0); }
 
+    button:focus-visible {
+      outline: 3px solid rgba(34, 211, 238, .65);
+      outline-offset: 2px;
+    }
+
     .msg {
       margin-top: .72rem;
       font-size: .95rem;
@@ -258,7 +263,7 @@
           </p>
         </section>
 
-        <fieldset class="answers-block" aria-labelledby="questionHeading">
+        <fieldset class="answers-block">
           <legend class="sr-only">
             Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
           </legend>
