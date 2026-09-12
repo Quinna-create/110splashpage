@@ -77,29 +77,28 @@
       grid-template-columns: 1.45fr 1fr;
       gap: 1rem;
       align-items: stretch;
+      margin: 0;
+      min-inline-size: 0;
+      padding: 0;
+      border: 0;
     }
 
-    .question-block {
+    .question-legend {
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.11);
       border-radius: 16px;
-      padding: 1rem;
-      display: grid;
-      grid-template-rows: 1fr;
-      align-items: stretch;
-    }
-
-    .question-title {
-      font-weight: 700;
-      font-size: 1.03rem;
-      margin: 0;
-      line-height: 1.52;
       color: #fdf7ff;
+      display: block;
+      font-size: 1.03rem;
+      font-weight: 700;
+      line-height: 1.52;
+      margin: 0;
+      max-width: 100%;
+      padding: 1rem;
+      width: 100%;
       word-break: break-word;
       overflow-wrap: break-word;
       white-space: normal;
-      display: flex;
-      align-items: flex-start;
     }
 
     .answers-block {
@@ -147,18 +146,6 @@
 
     .followup-field[hidden] {
       display: none;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
     }
 
     .followup-label {
@@ -246,7 +233,7 @@
       body { padding: 2rem .75rem 0.5rem .75rem; }
       .card { border-radius: 16px; padding: 1rem; }
       h1 { font-size: 1.22rem; }
-      .question-title { font-size: .98rem; }
+      .question-legend { font-size: .98rem; }
     }
   </style>
 </head>
@@ -256,17 +243,12 @@
     <p class="note">This one is anonymous, so be honest.</p>
 
     <form id="fictionalCharactersPoll">
-      <div class="poll-layout">
-        <div class="question-block" aria-hidden="true">
-          <p id="questionHeading" class="question-title">
-            Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
-          </p>
-        </div>
+      <fieldset class="poll-layout">
+        <legend id="questionHeading" class="question-legend">
+          Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
+        </legend>
 
-        <fieldset class="answers-block">
-          <legend class="sr-only">
-            Are there any fictional characters that you like (really, truly, genuinely like) whom you would find detestable in real life? If yes, provide an example.
-          </legend>
+        <div class="answers-block">
           <label class="option" for="answerYes">
             <input id="answerYes" type="radio" name="detestableCharacterAnswer" value="yes" data-label="Yes" aria-controls="exampleField" aria-expanded="false" required />
             <span>yes</span>
@@ -292,8 +274,8 @@
 
           <button type="submit">Submit</button>
           <div id="message" class="msg" aria-live="polite"></div>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
     </form>
   </div>
 
