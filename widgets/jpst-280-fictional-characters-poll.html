@@ -243,7 +243,7 @@
 <body>
   <div class="card">
     <h1>JPST 280: Fictional Characters Poll</h1>
-    <p class="note">This one is anonymous, so be honest.</p>
+    <p class="note">This widget does not ask for your name, so be honest.</p>
 
     <form id="fictionalCharactersPoll">
       <fieldset class="poll-layout" aria-describedby="answerHelp">
@@ -278,7 +278,7 @@
 
           <button type="submit">Submit</button>
           <div id="successMessage" class="msg ok" aria-live="polite" aria-atomic="true" role="status"></div>
-          <div id="errorMessage" class="msg err" aria-live="assertive" aria-atomic="true" role="alert"></div>
+          <div id="errorMessage" class="msg err" aria-live="assertive" aria-atomic="true" role="alert" hidden></div>
         </div>
       </fieldset>
     </form>
@@ -297,16 +297,18 @@
     function setMessage(message, kind) {
       if (kind === 'err') {
         successMessage.textContent = '';
+        errorMessage.hidden = false;
         errorMessage.textContent = message;
         return;
       }
-
+      errorMessage.hidden = true;
       errorMessage.textContent = '';
       successMessage.textContent = message;
     }
 
     function clearMessage() {
       successMessage.textContent = '';
+      errorMessage.hidden = true;
       errorMessage.textContent = '';
     }
 
