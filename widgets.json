@@ -51,5 +51,14 @@
     "questions": 1,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "jpst-280-timekeeping-poll",
+    "title": "JPST 280: Timekeeping Poll",
+    "type": "poll",
+    "path": "widgets/jpst-280-timekeeping-poll.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]
