@@ -76,6 +76,16 @@ export async function submitPollResponse({ widgetId, answers }) {
       console.log(`[submitPollResponse] Processing field: ${fieldName}, value:`, fieldValue);
       
       if (fieldValue == null) continue;
+
+      // Ranking: ordered array of { value, label }; first place earns the most points
+      if (Array.isArray(fieldValue)) {
+        fieldValue.forEach((item, index) => {
+          const key = slugifyKey(item.value);
+          updateObj[`${fieldName}.${key}`] = increment(fieldValue.length - index);
+          updateObj[`${fieldName}Labels.${key}`] = item.label || item.value;
+        });
+        continue;
+      }
       
       // If it's an object with value and label (e.g., { value: "immoral", label: "Immoral" })
       if (typeof fieldValue === 'object' && fieldValue.value && fieldValue.label) {
