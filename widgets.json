@@ -60,5 +60,14 @@
     "questions": 1,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "jpst-280-storytelling-media-ranking-poll",
+    "title": "JPST 280: Storytelling Media Ranking",
+    "type": "poll",
+    "path": "widgets/jpst-280-storytelling-media-ranking-poll.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]

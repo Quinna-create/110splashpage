@@ -327,7 +327,7 @@
           const labelMap = pickMap(agg, fieldName + 'Labels');
 
           const formattedFieldName = formatFieldName(fieldName);
-          card.append(sectionTitle(formattedFieldName));
+          card.append(sectionTitle(fieldName.endsWith('Ranking') ? formattedFieldName + ' (weighted score)' : formattedFieldName));
 
           if (Object.keys(fieldData).length === 0) {
             const empty = document.createElement('p');
@@ -337,10 +337,11 @@
           } else {
             Object.entries(fieldData)
               .sort((a, b) => b[1] - a[1])
-              .forEach(([k, v]) => {
+              .forEach(([k, v], index) => {
                 // Use label if available, otherwise format the key
                 const label = labelMap[k] || formatFieldName(k);
-                addKV(card, label, v);
+                const isRanking = fieldName.endsWith('Ranking');
+                addKV(card, isRanking ? `${index + 1}. ${label}` : label, v);
               });
           }
         });
