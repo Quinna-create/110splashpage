@@ -87,5 +87,14 @@
     "questions": 1,
     "active": true,
     "classGroup": "jpst-280"
+  },
+  {
+    "widgetId": "jpst-280-travel-anywhere-vs-anywhen",
+    "title": "JPST 280: Anywhere or Anywhen",
+    "type": "poll",
+    "path": "widgets/jpst-280-travel-anywhere-vs-anywhen.html",
+    "questions": 1,
+    "active": true,
+    "classGroup": "jpst-280"
   }
 ]
