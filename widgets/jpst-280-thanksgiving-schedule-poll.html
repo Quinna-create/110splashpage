@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPST 280: Thanksgiving Schedule Poll</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: .5rem;
+      font-family: "Noto Sans JP", "Segoe UI", Arial, sans-serif;
+      color: #30243b;
+      background: #fff;
+    }
+
+    .card {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 1rem 1.1rem;
+      background: #fdf2f8;
+      border: 2px solid #f3cce3;
+      border-radius: 14px;
+    }
+
+    h1 { margin: 0 0 .3rem; font-size: 1.15rem; }
+    .note { margin: 0 0 .8rem; color: #614c67; font-size: .9rem; }
+    fieldset { margin: 0; padding: 0; border: 0; }
+    legend { margin-bottom: .65rem; font-weight: 700; line-height: 1.4; }
+
+    .choices { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex: 1 1 170px;
+      padding: .6rem .7rem;
+      border: 1px solid #c49bd3;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .option:hover { background: #f3f8ff; border-color: #82559a; }
+    input { accent-color: #754394; }
+    input:focus-visible, button:focus-visible { outline: 3px solid #245e9b; outline-offset: 3px; }
+
+    button {
+      margin-top: .75rem;
+      padding: .6rem 1.25rem;
+      border: 0;
+      border-radius: 10px;
+      background: #70418b;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { background: #572c71; }
+    button:disabled { cursor: wait; opacity: .7; }
+    .msg { min-height: 1.3em; margin: .55rem 0 0; font-size: .9rem; }
+    .ok { color: #17613c; }
+    .err { color: #a12636; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Thanksgiving week schedule</h1>
+    <p class="note">Your response is anonymous.</p>
+
+    <form id="schedulePoll">
+      <fieldset>
+        <legend>Do you prefer a synchronous or asynchronous class for the week of Thanksgiving?</legend>
+        <div class="choices">
+          <label class="option">
+            <input type="radio" name="scheduleChoice" value="synchronous" data-label="Synchronous" required />
+            Synchronous
+          </label>
+          <label class="option">
+            <input type="radio" name="scheduleChoice" value="asynchronous" data-label="Asynchronous" required />
+            Asynchronous
+          </label>
+        </div>
+      </fieldset>
+      <button type="submit">Submit</button>
+      <p id="message" class="msg" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <script type="module">
+    import { ensureWidgetRegistry, submitPollResponse } from "../js/widget-utils.js";
+
+    const WIDGET_ID = "jpst-280-thanksgiving-schedule-poll";
+    const form = document.getElementById("schedulePoll");
+    const button = form.querySelector('button[type="submit"]');
+    const msg = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const selected = form.querySelector('input[name="scheduleChoice"]:checked');
+      if (!selected) {
+        msg.textContent = "Please select one answer.";
+        msg.className = "msg err";
+        return;
+      }
+
+      button.disabled = true;
+      msg.textContent = "Submitting...";
+      msg.className = "msg";
+      try {
+        await ensureWidgetRegistry({
+          widgetId: WIDGET_ID,
+          title: "JPST 280: Thanksgiving Schedule",
+          type: "poll",
+          version: 1,
+          active: true,
+          classGroup: "jpst-280"
+        });
+        await submitPollResponse({
+          widgetId: WIDGET_ID,
+          answers: {
+            scheduleChoice: { value: selected.value, label: selected.dataset.label }
+          }
+        });
+        form.reset();
+        msg.textContent = "Thank you! Your anonymous response was submitted.";
+        msg.className = "msg ok";
+      } catch (error) {
+        console.error("Could not submit Thanksgiving schedule response:", error);
+        msg.textContent = "Submission failed. Please try again in a moment.";
+        msg.className = "msg err";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

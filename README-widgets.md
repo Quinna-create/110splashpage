@@ -11,6 +11,7 @@ This repo supports a multi-widget pattern:
 
 - Poll widget: `https://quinna-create.github.io/110splashpage/widgets/poll-01.html`
 - Fated or Free Will poll: `https://quinna-create.github.io/110splashpage/widgets/jpst-280-fated-or-free-will-poll.html`
+- Thanksgiving schedule poll: `https://quinna-create.github.io/110splashpage/widgets/jpst-280-thanksgiving-schedule-poll.html`
 - Instructor dashboard: `https://quinna-create.github.io/110splashpage/dashboard/index.html`
 - Canvas snippet file: `https://quinna-create.github.io/110splashpage/canvas-embed-snippet.html`
 
@@ -67,6 +68,20 @@ Use this iframe in a Canvas announcement/page HTML editor:
   src="https://quinna-create.github.io/110splashpage/widgets/poll-01.html"
   width="100%"
   height="900"
+  style="border:0;"
+  loading="lazy"
+  referrerpolicy="no-referrer">
+</iframe>
+```
+
+For the compact Thanksgiving schedule poll:
+
+```html
+<iframe
+  title="Thanksgiving week schedule poll"
+  src="https://quinna-create.github.io/110splashpage/widgets/jpst-280-thanksgiving-schedule-poll.html"
+  width="100%"
+  height="400"
   style="border:0;"
   loading="lazy"
   referrerpolicy="no-referrer">
