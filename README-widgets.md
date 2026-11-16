@@ -10,6 +10,7 @@ This repo supports a multi-widget pattern:
 ## Live URLs (after GitHub Pages is enabled)
 
 - Poll widget: `https://quinna-create.github.io/110splashpage/widgets/poll-01.html`
+- Fated or Free Will poll: `https://quinna-create.github.io/110splashpage/widgets/jpst-280-fated-or-free-will-poll.html`
 - Instructor dashboard: `https://quinna-create.github.io/110splashpage/dashboard/index.html`
 - Canvas snippet file: `https://quinna-create.github.io/110splashpage/canvas-embed-snippet.html`
 
