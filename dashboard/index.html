@@ -276,7 +276,7 @@
         // Check if this is a flattened field (contains a dot)
         if (key.includes('.')) {
           const fieldName = key.split('.')[0];
-          fields.add(fieldName);
+          if (!fieldName.endsWith('Labels')) fields.add(fieldName);
         }
         // Or if it's a direct nested object (old format)
         else if (typeof agg[key] === 'object' && !Array.isArray(agg[key])) {
